@@ -3,16 +3,22 @@ package com.vassev.meetingapp.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.vassev.meetingapp.presentation.navigation.BottomNavigationBar
 import com.vassev.meetingapp.presentation.navigation.Navigation
@@ -27,8 +33,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            var showBottomBar by rememberSaveable { mutableStateOf(true) }
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            showBottomBar = when(navBackStackEntry?.destination?.route) {
+                Screen.HomeScreen.route -> true
+                Screen.CalendarScreen.route -> true
+                Screen.SettingsScreen.route -> true
+                else -> false
+            }
             Scaffold(
                 bottomBar = {
+                    if(showBottomBar)
                     BottomNavigationBar(
                         items = listOf(
                             NavigationItem(
@@ -56,8 +71,11 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
-            ) {
-                Navigation(navController = navController)
+            ) { innerPadding ->
+                Navigation(
+                    navController = navController,
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
         }
     }
