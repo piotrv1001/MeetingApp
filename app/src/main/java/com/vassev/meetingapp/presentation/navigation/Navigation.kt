@@ -1,10 +1,9 @@
-package com.vassev.meetingapp.presentation
+package com.vassev.meetingapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.vassev.meetingapp.presentation.add_edit_meeting.components.AddEditMeetingScreen
 import com.vassev.meetingapp.presentation.calendar.components.CalendarScreen
 import com.vassev.meetingapp.presentation.chat.components.ChatScreen
@@ -16,7 +15,6 @@ import com.vassev.meetingapp.presentation.register.components.RegisterScreen
 import com.vassev.meetingapp.presentation.search.components.SearchScreen
 import com.vassev.meetingapp.presentation.settings.components.SettingsScreen
 import com.vassev.meetingapp.presentation.util.Screen
-import java.util.*
 
 @Composable
 fun Navigation(
