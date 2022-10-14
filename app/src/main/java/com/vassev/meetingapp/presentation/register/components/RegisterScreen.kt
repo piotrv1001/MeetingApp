@@ -1,8 +1,10 @@
 package com.vassev.meetingapp.presentation.register.components
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -41,9 +43,7 @@ fun RegisterScreen(
             when(result) {
                 is Resource.Success -> {
                     navController.navigate(Screen.HomeScreen.route) {
-                        popUpTo(Screen.RegisterScreen.route) {
-                            inclusive = true
-                        }
+                        popUpTo(0)
                     }
                 }
                 is Resource.Error -> {
@@ -139,9 +139,20 @@ fun RegisterScreen(
             Button(
                 modifier = Modifier
                     .fillMaxWidth(0.8f),
-                onClick = { viewModel.onEvent(RegisterEvent.RegisterButtonClicked) }
+                onClick = { viewModel.onEvent(RegisterEvent.RegisterButtonClicked) },
             ) {
                 Text(text = "Register")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f),
+                onClick = { navController.navigate(Screen.LoginScreen.route) },
+                border = BorderStroke(1.dp, Color.Gray),
+                shape = RoundedCornerShape(10),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
+            ) {
+                Text("Login")
             }
         }
     }

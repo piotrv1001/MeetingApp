@@ -57,18 +57,18 @@ class AuthRepositoryImpl(
 
     override suspend fun authenticate(): Resource<Unit> {
         return try {
-            val token = prefs.getString("jwt", null) ?: return Resource.Error("No token")
+            val token = prefs.getString("jwt", null) ?: return Resource.Unauthorized()
             val response: HttpResponse = client.get("http://${AuthRepository.Endpoints.User.url}/authenticate") {
                 header(HttpHeaders.Authorization, "Bearer $token")
             }
             if(response.status == HttpStatusCode.OK) {
                 Resource.Success()
             } else {
-                Resource.Unauthorized()
+                Resource.Error("Http Error")
             }
         } catch(e: Exception) {
             e.printStackTrace()
-            Resource.Unauthorized()
+            Resource.Error(e.localizedMessage ?: "Error")
         }
     }
 }
