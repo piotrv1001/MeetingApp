@@ -1,5 +1,10 @@
 package com.vassev.meetingapp.di
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
+import com.vassev.meetingapp.data.remote.repository.AuthRepositoryImpl
+import com.vassev.meetingapp.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,5 +31,17 @@ object AppModule {
                 serializer = KotlinxSerializer()
             }
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPref(app: Application): SharedPreferences {
+        return app.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(client: HttpClient, prefs: SharedPreferences): AuthRepository {
+        return AuthRepositoryImpl(client, prefs)
     }
 }

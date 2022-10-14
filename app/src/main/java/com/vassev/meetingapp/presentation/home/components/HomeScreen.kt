@@ -15,12 +15,13 @@ fun HomeScreen(
     viewModel: HomeViewmodel = hiltViewModel(),
     navController: NavController
 ) {
+    val userId = viewModel.userId
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Home screen"
+            text = "Hello, your userId = $userId"
         )
     }
 }

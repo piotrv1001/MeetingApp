@@ -1,29 +1,148 @@
 package com.vassev.meetingapp.presentation.register.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationCity
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.vassev.meetingapp.presentation.register.RegisterViewmodel
+import com.vassev.meetingapp.domain.util.Resource
+import com.vassev.meetingapp.presentation.register.RegisterEvent
+import com.vassev.meetingapp.presentation.register.RegisterViewodel
 import com.vassev.meetingapp.presentation.util.Screen
 
 @Composable
 fun RegisterScreen(
-    viewModel: RegisterViewmodel = hiltViewModel(),
+    viewModel: RegisterViewodel = hiltViewModel(),
     navController: NavController
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Button(onClick = { navController.navigate(Screen.HomeScreen.route) }) {
-            Text("Register")
+    val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, context) {
+        viewModel.authResults.collect { result ->
+            when(result) {
+                is Resource.Success -> {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.RegisterScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    Toast.makeText(
+                        context,
+                        "Error: ${result.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                else -> {}
+            }
         }
     }
-
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Register",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            TextField(
+                value = state.email,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Email, contentDescription = "email")
+                },
+                onValueChange = {
+                    viewModel.onEvent(RegisterEvent.EmailChanged(it))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "Email")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                value = state.password,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Password, contentDescription = "password")
+                },
+                onValueChange = {
+                    viewModel.onEvent(RegisterEvent.PasswordChanged(it))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "Password")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                value = state.name,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = "name")
+                },
+                onValueChange = {
+                    viewModel.onEvent(RegisterEvent.NameChanged(it))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "Name")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                value = state.location,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.LocationCity, contentDescription = "location")
+                },
+                onValueChange = {
+                    viewModel.onEvent(RegisterEvent.LocationChanged(it))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "Location")
+                }
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f),
+                onClick = { viewModel.onEvent(RegisterEvent.RegisterButtonClicked) }
+            ) {
+                Text(text = "Register")
+            }
+        }
+    }
 }
