@@ -37,7 +37,6 @@ fun HomeScreen(
             modifier = Modifier
                 .background(Color.Blue),
             onClick = { navController.navigate(Screen.AddEditMeetingScreen.route) },
-            shape = RoundedCornerShape(10)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

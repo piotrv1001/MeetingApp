@@ -3,6 +3,9 @@ package com.vassev.meetingapp.presentation.add_edit_meeting.components
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.vassev.meetingapp.domain.util.Resource
@@ -53,7 +58,7 @@ fun AddEditMeetingScreen(
             }
         }
     }
-    if (state.isLoading) {
+    if(state.isLoading) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -62,7 +67,7 @@ fun AddEditMeetingScreen(
         ) {
             CircularProgressIndicator()
         }
-    } else {
+    } else if(!state.showSearchUsers){
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -140,6 +145,31 @@ fun AddEditMeetingScreen(
                     Text(text = "Location")
                 }
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row (
+                modifier = Modifier.align(Alignment.Start),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.People,
+                    contentDescription = "Meeting members"
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = "Members")
+                Spacer(modifier = Modifier.width(16.dp))
+                Button(
+                    modifier = Modifier
+                        .background(Color.Blue),
+                    onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Search members",
+                        tint = Color.White
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
                 modifier = Modifier
@@ -147,6 +177,82 @@ fun AddEditMeetingScreen(
                 onClick = { viewModel.onEvent(AddEditMeetingEvent.SaveButtonClicked) },
             ) {
                 Text(text = "Save")
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row (
+                verticalAlignment = Alignment.CenterVertically
+                    ){
+                Button(onClick = { viewModel.onEvent(AddEditMeetingEvent.GoBackButtonClicked) }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Go back"
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "Search",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            TextField(
+                value = state.searchedUser,
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Search, contentDescription = "search")
+                },
+                onValueChange = {
+                    viewModel.onEvent(AddEditMeetingEvent.SearchedUserChanged(it))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(text = "Search...")
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if(state.searchedUser.length > 1) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    items(
+                        items = state.memberHashMap.keys.toList().filter {
+                            it.name.lowercase().startsWith(state.searchedUser.lowercase())
+                                    || it.name.lowercase().endsWith(state.searchedUser.lowercase())
+                        },
+                        key = { it.userId }
+                    ) { user ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Checkbox(
+                                checked = state.memberHashMap[user] ?: false,
+                                onCheckedChange = { checked ->
+                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(user, checked))
+                                })
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = user.name,
+                                fontSize = 18.sp
+                            )
+                        }
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .align(Alignment.CenterHorizontally),
+                            thickness = 1.dp,
+                            color = Color.Gray
+                        )
+                    }
+                }
             }
         }
     }

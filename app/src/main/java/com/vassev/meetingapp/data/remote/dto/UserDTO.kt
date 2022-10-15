@@ -9,14 +9,16 @@ data class UserDTO(
     val email: String,
     val password: String,
     val name: String,
-    val location: String
+    val location: String,
+    val meetings: List<String> = emptyList()
 ) {
     fun fromDTOToEntity(): User {
         return User(
             email = email,
             password = password,
             name = name,
-            location = location
+            location = location,
+            meetings = meetings
         )
     }
 }
