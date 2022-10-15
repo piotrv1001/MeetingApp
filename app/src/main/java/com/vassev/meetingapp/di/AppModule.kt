@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.vassev.meetingapp.data.remote.repository.AuthRepositoryImpl
+import com.vassev.meetingapp.data.remote.repository.MeetingRepositoryImpl
 import com.vassev.meetingapp.domain.repository.AuthRepository
+import com.vassev.meetingapp.domain.repository.MeetingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,4 +46,11 @@ object AppModule {
     fun provideAuthRepository(client: HttpClient, prefs: SharedPreferences): AuthRepository {
         return AuthRepositoryImpl(client, prefs)
     }
+
+    @Provides
+    @Singleton
+    fun provideMeetingRepository(client: HttpClient): MeetingRepository {
+        return MeetingRepositoryImpl(client)
+    }
+
 }

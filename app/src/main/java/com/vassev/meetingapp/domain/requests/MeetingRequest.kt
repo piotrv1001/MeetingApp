@@ -1,6 +1,9 @@
-package com.vassev.meetingapp.domain.model
+package com.vassev.meetingapp.domain.requests
 
-data class Meeting(
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MeetingRequest(
     val name: String,
     val duration: Int,
     val date: Long,

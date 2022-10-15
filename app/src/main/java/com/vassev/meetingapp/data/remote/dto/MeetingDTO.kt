@@ -9,14 +9,16 @@ data class MeetingDTO(
     val name: String,
     val duration: Int,
     val date: Long,
-    val location: String
+    val location: String,
+    val users: List<String> = emptyList()
 ) {
     fun fromDTOToEntity(): Meeting {
         return Meeting(
             name = name,
             duration = duration,
             date = date,
-            location = location
+            location = location,
+            users = users
         )
     }
 }

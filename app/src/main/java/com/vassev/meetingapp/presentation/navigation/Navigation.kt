@@ -3,8 +3,10 @@ package com.vassev.meetingapp.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.vassev.meetingapp.presentation.add_edit_meeting.components.AddEditMeetingScreen
 import com.vassev.meetingapp.presentation.calendar.components.CalendarScreen
 import com.vassev.meetingapp.presentation.chat.components.ChatScreen
@@ -26,7 +28,17 @@ fun Navigation(
         composable(route = Screen.RegisterScreen.route) {
             RegisterScreen(navController = navController)
         }
-        composable(route = Screen.AddEditMeetingScreen.route) {
+        composable(
+            route = Screen.AddEditMeetingScreen.route + "?meetingId={meetingId}",
+            arguments = listOf(
+                navArgument(
+                    name = "meetingId"
+                ){
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
             AddEditMeetingScreen(navController = navController)
         }
         composable(route = Screen.CalendarScreen.route) {
