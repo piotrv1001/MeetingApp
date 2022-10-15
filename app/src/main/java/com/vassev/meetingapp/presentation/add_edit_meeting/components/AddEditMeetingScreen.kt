@@ -222,25 +222,25 @@ fun AddEditMeetingScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(
-                        items = state.memberHashMap.keys.toList().filter {
-                            it.name.lowercase().startsWith(state.searchedUser.lowercase())
-                                    || it.name.lowercase().endsWith(state.searchedUser.lowercase())
+                        items = state.memberHashMap.entries.filter { entry ->
+                            entry.key.name.lowercase().startsWith(state.searchedUser.lowercase())
+                                    || entry.key.name.lowercase().endsWith(state.searchedUser.lowercase())
                         },
-                        key = { it.userId }
-                    ) { user ->
+                        key = { it.key.userId }
+                    ) { entry ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp)
                         ) {
                             Checkbox(
-                                checked = state.memberHashMap[user] ?: false,
+                                checked = entry.value,
                                 onCheckedChange = { checked ->
-                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(user, checked))
+                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.key, checked))
                                 })
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = user.name,
+                                text = entry.key.name,
                                 fontSize = 18.sp
                             )
                         }

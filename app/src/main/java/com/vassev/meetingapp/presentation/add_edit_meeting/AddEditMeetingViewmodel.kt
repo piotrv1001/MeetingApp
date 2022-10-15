@@ -184,7 +184,7 @@ class AddEditMeetingViewmodel @Inject constructor(
     }
 
     private fun userChecked(userDTO: UserDTO, checked: Boolean) {
-        val updatedHashMap = state.value.memberHashMap
+        val updatedHashMap = HashMap(state.value.memberHashMap)
         updatedHashMap[userDTO] = checked
         _state.update { currentState ->
             currentState.copy(
