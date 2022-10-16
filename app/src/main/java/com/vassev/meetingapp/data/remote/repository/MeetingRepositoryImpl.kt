@@ -4,6 +4,7 @@ import com.vassev.meetingapp.data.remote.dto.MeetingDTO
 import com.vassev.meetingapp.domain.model.Meeting
 import com.vassev.meetingapp.domain.repository.MeetingRepository
 import com.vassev.meetingapp.domain.requests.MeetingRequest
+import com.vassev.meetingapp.domain.requests.MeetingsForUserRequest
 import com.vassev.meetingapp.domain.util.Resource
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -14,10 +15,12 @@ class MeetingRepositoryImpl(
     private val client: HttpClient
 ): MeetingRepository {
 
-    override suspend fun getAllMeetingsForUser(userId: String): List<Meeting> {
+    override suspend fun getAllMeetingsForUser(meetingsForUserRequest: MeetingsForUserRequest): List<MeetingDTO> {
         return try {
-            val response: List<MeetingDTO> = client.get("http://${MeetingRepository.Endpoints.Meeting.url}?userId=$userId")
-            response.map { it.fromDTOToEntity() }
+            client.get("http://${MeetingRepository.Endpoints.Meeting.url}/forUser") {
+                contentType(ContentType.Application.Json)
+                body = meetingsForUserRequest
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
@@ -26,7 +29,7 @@ class MeetingRepositoryImpl(
 
     override suspend fun getMeetingById(meetingId: String): MeetingDTO? {
         return try {
-            client.get("http://${MeetingRepository.Endpoints.Meeting.url}?meetingId=$meetingId")
+            client.get("http://${MeetingRepository.Endpoints.Meeting.url}/$meetingId")
         } catch (e: Exception) {
             e.printStackTrace()
             null

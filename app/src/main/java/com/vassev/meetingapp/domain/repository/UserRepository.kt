@@ -6,7 +6,7 @@ import com.vassev.meetingapp.domain.util.Constants
 
 interface UserRepository {
 
-    suspend fun getUserById(userId: String): User
+    suspend fun getUserById(userId: String): UserDTO?
 
     suspend fun getUsersForMeeting(meetingId: String): List<UserDTO>
 

@@ -19,13 +19,18 @@ class UserRepositoryImpl(
         }
     }
 
-    override suspend fun getUserById(userId: String): User {
-        TODO("Not yet implemented")
+    override suspend fun getUserById(userId: String): UserDTO? {
+        return try {
+            client.get("http://${UserRepository.Endpoints.User.url}/$userId")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     override suspend fun getUsersForMeeting(meetingId: String): List<UserDTO> {
         return try {
-            client.get("http://${UserRepository.Endpoints.User.url}?meetingId=$meetingId")
+            client.get("http://${UserRepository.Endpoints.User.url}/forMeeting/$meetingId")
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
