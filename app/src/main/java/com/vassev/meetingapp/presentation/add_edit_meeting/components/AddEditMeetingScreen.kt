@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -35,6 +36,9 @@ fun AddEditMeetingScreen(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
+    val filteredUsers by viewModel.filteredUsers.collectAsState()
+    val selectedUsers by viewModel.selectedUsers.collectAsState()
+
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
         viewModel.meetingResults.collect { result ->
@@ -147,21 +151,38 @@ fun AddEditMeetingScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row (
-                modifier = Modifier.align(Alignment.Start),
-                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.People,
-                    contentDescription = "Meeting members"
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = "Members")
-                Spacer(modifier = Modifier.width(16.dp))
+                Row {
+                    Icon(
+                        imageVector = Icons.Default.People,
+                        contentDescription = "Meeting members"
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = "Members (${selectedUsers.size})")
+                }
                 Button(
                     modifier = Modifier
-                        .background(Color.Blue),
-                    onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) }
+                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                    onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 18.dp
+                    ),
+                    contentPadding = PaddingValues(
+                        start = 10.dp,
+                        end = 10.dp,
+                        top = 10.dp,
+                        bottom = 10.dp
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -171,10 +192,49 @@ fun AddEditMeetingScreen(
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                items(
+                    items = selectedUsers.toList(),
+                    key = {
+                        it.first.userId
+                    }
+                ) { entry ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = entry.first.name,
+                            fontSize = 18.sp
+                        )
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .align(Alignment.CenterHorizontally),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
             Button(
                 modifier = Modifier
                     .fillMaxWidth(0.8f),
                 onClick = { viewModel.onEvent(AddEditMeetingEvent.SaveButtonClicked) },
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Blue,
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.elevation(
+                    defaultElevation = 18.dp
+                ),
             ) {
                 Text(text = "Save")
             }
@@ -188,7 +248,25 @@ fun AddEditMeetingScreen(
             Row (
                 verticalAlignment = Alignment.CenterVertically
                     ){
-                Button(onClick = { viewModel.onEvent(AddEditMeetingEvent.GoBackButtonClicked) }) {
+                Button(
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                    onClick = { viewModel.onEvent(AddEditMeetingEvent.GoBackButtonClicked) },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 18.dp
+                    ),
+                    contentPadding = PaddingValues(
+                        start = 10.dp,
+                        end = 10.dp,
+                        top = 10.dp,
+                        bottom = 10.dp
+                    )
+                ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Go back"
@@ -218,15 +296,15 @@ fun AddEditMeetingScreen(
             Spacer(modifier = Modifier.height(16.dp))
             if(state.searchedUser.length > 1) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                 ) {
                     items(
-                        items = state.memberHashMap.entries.filter { entry ->
-                            entry.key.name.lowercase().startsWith(state.searchedUser.lowercase())
-                                    || entry.key.name.lowercase().endsWith(state.searchedUser.lowercase())
-                        },
-                        key = { it.key.userId }
+                        items = filteredUsers.toList(),
+                        key = {
+                            it.first.userId
+                        }
                     ) { entry ->
                         Row(
                             modifier = Modifier
@@ -234,24 +312,78 @@ fun AddEditMeetingScreen(
                                 .padding(16.dp)
                         ) {
                             Checkbox(
-                                checked = entry.value,
+                                checked = entry.second,
                                 onCheckedChange = { checked ->
-                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.key, checked))
-                                })
+                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.first, checked))
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    uncheckedColor = Color.Gray,
+                                    checkedColor = Color.Gray,
+                                    checkmarkColor = Color.White
+                                )
+                            )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = entry.key.name,
+                                text = entry.first.name,
                                 fontSize = 18.sp
                             )
                         }
                         Divider(
                             modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .align(Alignment.CenterHorizontally),
+                                .fillMaxWidth(),
                             thickness = 1.dp,
                             color = Color.Gray
                         )
                     }
+                }
+            } else {
+                Spacer(modifier = Modifier.height(200.dp))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Invited users (${selectedUsers.size})",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                items(
+                    items = selectedUsers.toList(),
+                    key = {
+                        it.first.userId
+                    }
+                ) { entry ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Checkbox(
+                            checked = entry.second,
+                            onCheckedChange = { checked ->
+                                viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.first, checked))
+                            },
+                            colors = CheckboxDefaults.colors(
+                                uncheckedColor = Color.Gray,
+                                checkedColor = Color.Gray,
+                                checkmarkColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = entry.first.name,
+                            fontSize = 18.sp
+                        )
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
                 }
             }
         }

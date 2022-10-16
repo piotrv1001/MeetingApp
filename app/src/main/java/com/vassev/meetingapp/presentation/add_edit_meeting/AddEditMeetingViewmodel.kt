@@ -13,10 +13,7 @@ import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.register.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +26,19 @@ class AddEditMeetingViewmodel @Inject constructor(
 
     private val _state = MutableStateFlow(AddEditMeetingState())
     val state = _state.asStateFlow()
+
+    val filteredUsers = state.map { state ->
+        state.memberHashMap.filter { entry ->
+            entry.key.name.lowercase().startsWith(state.searchedUser.lowercase())
+                    || entry.key.name.lowercase().endsWith(state.searchedUser.lowercase())
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyMap())
+
+    val selectedUsers = state.map { state ->
+        state.memberHashMap.filter { entry ->
+            entry.value
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyMap())
 
     private val resultChannel = Channel<Resource<Unit>>()
     val meetingResults = resultChannel.receiveAsFlow()
@@ -109,7 +119,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
                 // change date later
                 date = 0,
-                users = state.value.memberHashMap.filterValues { it }.keys.toList().map { it.userId }
+                users = selectedUsers.value.keys.map { it.userId }
             )
             viewModelScope.launch {
                 _state.update { currentState ->
