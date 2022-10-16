@@ -51,20 +51,15 @@ class MeetingRepositoryImpl(
 
     }
 
-    override suspend fun insertMeeting(meetingRequest: MeetingRequest): Resource<Unit> {
+    override suspend fun insertMeeting(meetingRequest: MeetingRequest): String {
         return try {
-            val response: HttpResponse = client.post("http://${MeetingRepository.Endpoints.Meeting.url}") {
+            client.post("http://${MeetingRepository.Endpoints.Meeting.url}") {
                 contentType(ContentType.Application.Json)
                 body = meetingRequest
             }
-            if(response.status == HttpStatusCode.OK) {
-                Resource.Success()
-            } else {
-                Resource.Error("Http Error")
-            }
         } catch (e: Exception) {
             e.printStackTrace()
-            Resource.Error(e.localizedMessage ?: "Error")
+            ""
         }
     }
 }

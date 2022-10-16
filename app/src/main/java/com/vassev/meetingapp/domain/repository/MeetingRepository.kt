@@ -14,7 +14,7 @@ interface MeetingRepository {
 
     suspend fun updateMeeting(meeting: MeetingDTO): Resource<Unit>
 
-    suspend fun insertMeeting(meetingRequest: MeetingRequest): Resource<Unit>
+    suspend fun insertMeeting(meetingRequest: MeetingRequest): String
 
     sealed class Endpoints(val url: String) {
         object Meeting: Endpoints("${Constants.BASE_URL}/meeting")

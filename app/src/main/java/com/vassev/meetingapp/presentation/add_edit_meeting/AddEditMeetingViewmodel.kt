@@ -9,6 +9,7 @@ import com.vassev.meetingapp.domain.model.User
 import com.vassev.meetingapp.domain.repository.MeetingRepository
 import com.vassev.meetingapp.domain.repository.UserRepository
 import com.vassev.meetingapp.domain.requests.MeetingRequest
+import com.vassev.meetingapp.domain.requests.UpdateUserWithMeetingRequest
 import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.register.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -127,8 +128,17 @@ class AddEditMeetingViewmodel @Inject constructor(
                         isLoading = true
                     )
                 }
-                val result = meetingRepository.insertMeeting(meetingRequest)
-                resultChannel.send(result)
+                val newMeetingId = meetingRepository.insertMeeting(meetingRequest)
+                if(newMeetingId != "") {
+                    currentMeetingId = newMeetingId
+                    val result = userRepository.updateUsersWithMeeting(
+                        UpdateUserWithMeetingRequest(
+                            userIds = selectedUsers.value.keys.map { it.userId },
+                            meetingId = newMeetingId
+                        )
+                    )
+                    resultChannel.send(result)
+                }
                 _state.update { currentState ->
                     currentState.copy(
                         isLoading = false

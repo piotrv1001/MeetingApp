@@ -3,8 +3,12 @@ package com.vassev.meetingapp.data.remote.repository
 import com.vassev.meetingapp.data.remote.dto.UserDTO
 import com.vassev.meetingapp.domain.model.User
 import com.vassev.meetingapp.domain.repository.UserRepository
+import com.vassev.meetingapp.domain.requests.UpdateUserWithMeetingRequest
+import com.vassev.meetingapp.domain.util.Resource
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 
 class UserRepositoryImpl(
     private val client: HttpClient
@@ -29,6 +33,23 @@ class UserRepositoryImpl(
         } catch (e: Exception) {
             e.printStackTrace()
             emptyList()
+        }
+    }
+
+    override suspend fun updateUsersWithMeeting(request: UpdateUserWithMeetingRequest): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.put("http://${UserRepository.Endpoints.User.url}") {
+                contentType(ContentType.Application.Json)
+                body = request
+            }
+            if(response.status == HttpStatusCode.OK) {
+                Resource.Success()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
         }
     }
 
