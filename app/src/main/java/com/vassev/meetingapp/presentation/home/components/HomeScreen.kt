@@ -1,6 +1,7 @@
 package com.vassev.meetingapp.presentation.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -116,7 +117,8 @@ fun HomeScreen(
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .padding(8.dp)
+                                    .padding(16.dp)
+                                    .clickable { navController.navigate(Screen.MeetingInfoScreen.route + "/${meeting.meetingId}") }
                             ) {
                                 Text(
                                     text = meeting.name,

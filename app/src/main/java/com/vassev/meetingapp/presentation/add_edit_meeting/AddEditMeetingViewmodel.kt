@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vassev.meetingapp.data.remote.dto.MeetingDTO
 import com.vassev.meetingapp.data.remote.dto.UserDTO
 import com.vassev.meetingapp.domain.repository.MeetingRepository
 import com.vassev.meetingapp.domain.repository.UserRepository
@@ -137,6 +138,30 @@ class AddEditMeetingViewmodel @Inject constructor(
                     )
                 }
             }
+        } else {
+            val updatedMeeting = MeetingDTO(
+                meetingId = currentMeetingId ?: "",
+                name = state.value.title,
+                location = state.value.location,
+                duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
+                // change date later
+                date = 0,
+                users = selectedUsers.value.keys.map { it.userId }
+            )
+            viewModelScope.launch {
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = true
+                    )
+                }
+                val result = meetingRepository.updateMeeting(updatedMeeting)
+                resultChannel.send(result)
+                _state.update { currentState ->
+                    currentState.copy(
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 
@@ -161,11 +186,17 @@ class AddEditMeetingViewmodel @Inject constructor(
                                 minutes = minutes.toString()
                             )
                         }
-                    }
-                    _state.update { currentState ->
-                        currentState.copy(
-                            isLoading = false
-                        )
+                        val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
+                        val meetingMembers = userRepository.getUsersForMeeting(meetingDTO.meetingId)
+                        meetingMembers.forEach { member ->
+                            hashMap[member] = true
+                        }
+                        _state.update { currentState ->
+                            currentState.copy(
+                                memberHashMap = hashMap,
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             }
