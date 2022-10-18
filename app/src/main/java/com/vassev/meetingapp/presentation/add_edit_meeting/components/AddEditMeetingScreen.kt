@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.vassev.meetingapp.data.remote.dto.UserDTO
 import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.add_edit_meeting.AddEditMeetingEvent
 import com.vassev.meetingapp.presentation.add_edit_meeting.AddEditMeetingViewmodel
@@ -197,7 +198,8 @@ fun AddEditMeetingScreen(
                     .fillMaxWidth()
             ) {
                 items(
-                    items = selectedUsers.toList(),
+                    items = selectedUsers.toList()
+                        .sortedWith { x: Pair<UserDTO, Boolean>, y: Pair<UserDTO, Boolean> -> if (x.first.userId == viewModel.userId) -1 else 1 },
                     key = {
                         it.first.userId
                     }
@@ -208,8 +210,13 @@ fun AddEditMeetingScreen(
                             .padding(16.dp)
                     ) {
                         Spacer(modifier = Modifier.width(16.dp))
+                        val username = if(entry.first.userId == viewModel.userId) {
+                            "${entry.first.name} (Me)"
+                        } else {
+                            entry.first.name
+                        }
                         Text(
-                            text = entry.first.name,
+                            text = username,
                             fontSize = 18.sp
                         )
                     }
@@ -351,7 +358,8 @@ fun AddEditMeetingScreen(
                     .fillMaxWidth()
             ) {
                 items(
-                    items = selectedUsers.toList(),
+                    items = selectedUsers.toList()
+                        .sortedWith { x: Pair<UserDTO, Boolean>, y: Pair<UserDTO, Boolean> -> if (x.first.userId == viewModel.userId) -1 else 1 },
                     key = {
                         it.first.userId
                     }
@@ -361,22 +369,29 @@ fun AddEditMeetingScreen(
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Checkbox(
-                            checked = entry.second,
-                            onCheckedChange = { checked ->
-                                viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.first, checked))
-                            },
-                            colors = CheckboxDefaults.colors(
-                                uncheckedColor = Color.Gray,
-                                checkedColor = Color.Gray,
-                                checkmarkColor = Color.White
+                        if(entry.first.userId == viewModel.userId) {
+                            Text(
+                                text = "${entry.first.name} (Me)",
+                                fontSize = 18.sp
                             )
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = entry.first.name,
-                            fontSize = 18.sp
-                        )
+                        } else {
+                            Checkbox(
+                                checked = entry.second,
+                                onCheckedChange = { checked ->
+                                    viewModel.onEvent(AddEditMeetingEvent.UserChecked(entry.first, checked))
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    uncheckedColor = Color.Gray,
+                                    checkedColor = Color.Gray,
+                                    checkmarkColor = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = entry.first.name,
+                                fontSize = 18.sp
+                            )
+                        }
                     }
                     Divider(
                         modifier = Modifier

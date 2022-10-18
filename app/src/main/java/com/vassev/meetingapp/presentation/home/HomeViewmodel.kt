@@ -32,8 +32,16 @@ class HomeViewmodel @Inject constructor(
     val userId = prefs.getString("userId", "ERROR") ?: ""
     var currentUser: UserDTO? = null
 
-    init {
-        loadMeetingsForUser(userId)
+//    init {
+//        loadMeetingsForUser(userId)
+//    }
+
+    fun onEvent(event: HomeEvent) {
+        when(event) {
+            is HomeEvent.ReloadData -> {
+                loadMeetingsForUser(userId)
+            }
+        }
     }
 
     private fun loadMeetingsForUser(userId: String) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,16 +12,19 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.People
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.vassev.meetingapp.presentation.home.HomeEvent
 import com.vassev.meetingapp.presentation.home.HomeViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
 
@@ -31,6 +35,9 @@ fun HomeScreen(
 ) {
     val meetings by viewModel.meetings.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(HomeEvent.ReloadData)
+    }
     if(isLoading) {
         Box(
             modifier = Modifier
@@ -46,7 +53,11 @@ fun HomeScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
             ) {
                 Row(
                     modifier = Modifier
@@ -95,12 +106,9 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(
-                        items = meetings,
-                        key = {
-                            it.meetingId
-                        }
-                    ) { meeting ->
+                    itemsIndexed(
+                        items = meetings
+                    ) { index, meeting ->
                         Spacer(modifier = Modifier.height(16.dp))
                         Card(
                             shape = RoundedCornerShape(10.dp),
@@ -148,6 +156,9 @@ fun HomeScreen(
                                     )
                                 }
                             }
+                        }
+                        if(index == meetings.size - 1) {
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
                     }
                 }

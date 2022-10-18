@@ -1,5 +1,6 @@
 package com.vassev.meetingapp.presentation.add_edit_meeting
 
+import android.content.SharedPreferences
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,16 +19,20 @@ import javax.inject.Inject
 class AddEditMeetingViewmodel @Inject constructor(
     private val meetingRepository: MeetingRepository,
     private val userRepository: UserRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val prefs: SharedPreferences,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AddEditMeetingState())
     val state = _state.asStateFlow()
 
+    val userId = prefs.getString("userId", "ERROR") ?: ""
+
     val filteredUsers = state.map { state ->
         state.memberHashMap.filter { entry ->
-            entry.key.name.lowercase().startsWith(state.searchedUser.lowercase())
-                    || entry.key.name.lowercase().endsWith(state.searchedUser.lowercase())
+            entry.key.userId != userId
+                    &&(entry.key.name.lowercase().startsWith(state.searchedUser.lowercase())
+                    || entry.key.name.lowercase().endsWith(state.searchedUser.lowercase()))
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyMap())
 
@@ -44,6 +49,7 @@ class AddEditMeetingViewmodel @Inject constructor(
     private var allAppUsers: List<UserDTO>? = null
 
     init {
+        loadAllAppUsers()
         loadDataIfEdit()
     }
 
@@ -81,7 +87,6 @@ class AddEditMeetingViewmodel @Inject constructor(
                 save()
             }
             is AddEditMeetingEvent.SearchUsersButtonClicked -> {
-                loadAllAppUsers()
                 _state.update { currentState ->
                     currentState.copy(
                         showSearchUsers = true
@@ -178,7 +183,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 allAppUsers = userRepository.getAllAppUsers()
                 val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
                 allAppUsers?.forEach { user ->
-                    hashMap[user] = false
+                    hashMap[user] = user.userId == userId
                 }
                 _state.update { currentState ->
                     currentState.copy(
