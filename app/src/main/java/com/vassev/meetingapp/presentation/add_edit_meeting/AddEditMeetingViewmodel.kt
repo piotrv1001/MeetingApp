@@ -9,6 +9,7 @@ import com.vassev.meetingapp.data.remote.dto.UserDTO
 import com.vassev.meetingapp.domain.repository.MeetingRepository
 import com.vassev.meetingapp.domain.repository.UserRepository
 import com.vassev.meetingapp.domain.requests.MeetingRequest
+import com.vassev.meetingapp.domain.requests.UsersForMeetingRequest
 import com.vassev.meetingapp.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -187,7 +188,11 @@ class AddEditMeetingViewmodel @Inject constructor(
                             )
                         }
                         val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
-                        val meetingMembers = userRepository.getUsersForMeeting(meetingDTO.meetingId)
+                        val meetingMembers = userRepository.getUsersForMeeting(
+                            UsersForMeetingRequest(
+                                userIds = meetingDTO.users
+                            )
+                        )
                         meetingMembers.forEach { member ->
                             hashMap[member] = true
                         }
