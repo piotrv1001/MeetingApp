@@ -44,8 +44,18 @@ fun Navigation(
         composable(route = Screen.CalendarScreen.route) {
             CalendarScreen(navController = navController)
         }
-        composable(route = Screen.ChatScreen.route) {
-            ChatScreen(navController = navController)
+        composable(
+            route = Screen.ChatScreen.route + "/{meetingId}",
+            arguments = listOf(
+                navArgument(
+                    name = "meetingId"
+                ){
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
+            ChatScreen(navController = navController, meetingId = it.arguments?.getString("meetingId"))
         }
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(navController = navController)

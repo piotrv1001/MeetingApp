@@ -5,10 +5,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.vassev.meetingapp.data.remote.repository.AuthRepositoryImpl
 import com.vassev.meetingapp.data.remote.repository.MeetingRepositoryImpl
+import com.vassev.meetingapp.data.remote.repository.MessageRepositoryImpl
 import com.vassev.meetingapp.data.remote.repository.UserRepositoryImpl
+import com.vassev.meetingapp.data.remote.service.WebSocketServiceImpl
 import com.vassev.meetingapp.domain.repository.AuthRepository
 import com.vassev.meetingapp.domain.repository.MeetingRepository
+import com.vassev.meetingapp.domain.repository.MessageRepository
 import com.vassev.meetingapp.domain.repository.UserRepository
+import com.vassev.meetingapp.domain.service.WebSocketService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +63,18 @@ object AppModule {
     @Singleton
     fun provideUserRepository(client: HttpClient): UserRepository {
         return UserRepositoryImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWebSocketService(client: HttpClient): WebSocketService {
+        return WebSocketServiceImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessageRepository(client: HttpClient): MessageRepository {
+        return MessageRepositoryImpl(client)
     }
 
 }

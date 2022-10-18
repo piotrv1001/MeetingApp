@@ -164,6 +164,12 @@ fun MeetingInfoScreen(
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(onClick = { navController.navigate(Screen.ChatScreen.route + "/$meetingId") }) {
+                Text(
+                    text = "Join chat room"
+                )
+            }
         }
     }
 }
