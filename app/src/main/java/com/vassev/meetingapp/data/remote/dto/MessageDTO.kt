@@ -11,7 +11,8 @@ data class MessageDTO(
     val text: String,
     val timestamp: Long,
     val userId: String,
-    val meetingId: String
+    val meetingId: String,
+    val username: String
 ) {
     fun fromDTOToEntity(): Message {
         val date = Date(timestamp)
@@ -22,7 +23,8 @@ data class MessageDTO(
             text = text,
             formattedTime = formattedDate,
             userId = userId,
-            meetingId = meetingId
+            meetingId = meetingId,
+            username = username
         )
     }
 }

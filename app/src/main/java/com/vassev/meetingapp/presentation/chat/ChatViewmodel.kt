@@ -61,30 +61,36 @@ class ChatViewmodel @Inject constructor(
         if(userId != "" && meetingId != "") {
             loadMeetingMessages(meetingId)
             viewModelScope.launch {
-                val result = webSocketService.startSession(
-                    WebSocketRequest(
-                        userId = userId,
-                        meetingId = meetingId
+                val currentUser = userRepository.getUserById(userId)
+                if(currentUser == null) {
+                    resultChannel.send(Resource.Error("User not found"))
+                } else {
+                    val result = webSocketService.startSession(
+                        WebSocketRequest(
+                            userId = userId,
+                            meetingId = meetingId,
+                            username = currentUser.name
+                        )
                     )
-                )
-                when(result) {
-                    is Resource.Success -> {
-                        webSocketService.observeMessages()
-                            .onEach { message ->
-                                val newList = state.value.messages.toMutableList().apply {
-                                    add(0, message)
-                                }
-                                _state.update { currentState ->
-                                    currentState.copy(
-                                        messages = newList
-                                    )
-                                }
-                            }.launchIn(viewModelScope)
+                    when(result) {
+                        is Resource.Success -> {
+                            webSocketService.observeMessages()
+                                .onEach { message ->
+                                    val newList = state.value.messages.toMutableList().apply {
+                                        add(0, message)
+                                    }
+                                    _state.update { currentState ->
+                                        currentState.copy(
+                                            messages = newList
+                                        )
+                                    }
+                                }.launchIn(viewModelScope)
+                        }
+                        is Resource.Error -> {
+                            resultChannel.send(Resource.Error("Error connecting to chat"))
+                        }
+                        else -> {}
                     }
-                    is Resource.Error -> {
-                        resultChannel.send(Resource.Error("Error connecting to chat"))
-                    }
-                    else -> {}
                 }
             }
         }

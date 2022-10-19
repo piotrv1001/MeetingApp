@@ -12,7 +12,7 @@ class MessageRepositoryImpl(
 
     override suspend fun getAllMessagesForMeeting(meetingId: String): List<Message> {
         return try {
-            client.get<List<MessageDTO>>("http://${MessageRepository.Endpoints.Message.url}/$meetingId").map { it.fromDTOToEntity() }
+            client.get<List<MessageDTO>>("http://${MessageRepository.Endpoints.Message.url}/$meetingId").sortedByDescending { it.timestamp }.map { it.fromDTOToEntity() }
         } catch(e: Exception) {
             e.printStackTrace()
             emptyList()

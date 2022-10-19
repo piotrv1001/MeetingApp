@@ -8,11 +8,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
@@ -76,6 +78,22 @@ fun ChatScreen(
                 .padding(16.dp)
 
         ) {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(
+                    onClick = { navController.navigateUp() },
+                    modifier = Modifier
+                        .size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Go back",
+                        tint = Color.Blue
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -118,17 +136,27 @@ fun ChatScreen(
                                     }
                                     drawPath(
                                         path = trianglePath,
-                                        color = if (isOwnMessage) Color.Green else Color.DarkGray
+                                        color = if (isOwnMessage) Color(0xFF5b86e5) else Color.DarkGray
                                     )
                                 }
                                 .background(
-                                    color = if (isOwnMessage) Color.Green else Color.DarkGray,
+                                    brush = if (isOwnMessage) Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFF36d1dc ),
+                                            Color(0xFF5b86e5)
+                                        )
+                                    ) else Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color.DarkGray,
+                                            Color.DarkGray
+                                        )
+                                    ),
                                     shape = RoundedCornerShape(10.dp)
                                 )
                                 .padding(8.dp)
                         ) {
                             Text(
-                                text = message.userId,
+                                text = message.username,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -161,7 +189,7 @@ fun ChatScreen(
                 IconButton(
                     onClick = { viewModel.onEvent(ChatEvent.SendMessage) }
                 ) {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "Send")
+                    Icon(imageVector = Icons.Default.Send, contentDescription = "Send", tint = Color(0xFF36d1dc ))
                 }
             }
         }

@@ -24,7 +24,7 @@ class WebSocketServiceImpl(
     override suspend fun startSession(webSocketRequest: WebSocketRequest): Resource<Unit> {
         return try {
             socket = client.webSocketSession {
-                url("ws://${WebSocketService.Endpoints.Chat.url}?userId=${webSocketRequest.userId}&meetingId=${webSocketRequest.meetingId}")
+                url("ws://${WebSocketService.Endpoints.Chat.url}?userId=${webSocketRequest.userId}&meetingId=${webSocketRequest.meetingId}&username=${webSocketRequest.username}")
             }
             if(socket?.isActive == true) {
                 Resource.Success(Unit)
