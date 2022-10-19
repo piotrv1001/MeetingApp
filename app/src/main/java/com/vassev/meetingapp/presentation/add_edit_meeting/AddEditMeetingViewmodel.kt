@@ -1,6 +1,7 @@
 package com.vassev.meetingapp.presentation.add_edit_meeting
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,8 +52,7 @@ class AddEditMeetingViewmodel @Inject constructor(
     private var allAppUsers: List<UserDTO>? = null
 
     init {
-        loadAllAppUsers()
-        loadDataIfEdit()
+        loadData()
     }
 
     fun onEvent(event: AddEditMeetingEvent) {
@@ -166,15 +166,22 @@ class AddEditMeetingViewmodel @Inject constructor(
         }
     }
 
-    private fun loadDataIfEdit() {
-        savedStateHandle.get<String>("meetingId")?.let { meetingId ->
-            if(meetingId != "") {
-                viewModelScope.launch {
-                    _state.update { currentState ->
-                        currentState.copy(
-                            isLoading = true
-                        )
-                    }
+    private fun loadData() {
+        viewModelScope.launch {
+            val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoading = true
+                )
+            }
+            if(allAppUsers == null) {
+                allAppUsers = userRepository.getAllAppUsers()
+                allAppUsers?.forEach { user ->
+                    hashMap[user] = user.userId == userId
+                }
+            }
+            savedStateHandle.get<String>("meetingId")?.let { meetingId ->
+                if (meetingId != "") {
                     currentMeetingId = meetingId
                     meetingRepository.getMeetingById(meetingId)?.also { meetingDTO ->
                         val hours: Int = meetingDTO.duration / 60
@@ -187,7 +194,6 @@ class AddEditMeetingViewmodel @Inject constructor(
                                 minutes = minutes.toString()
                             )
                         }
-                        val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
                         val meetingMembers = userRepository.getUsersForMeeting(
                             UsersForMeetingRequest(
                                 userIds = meetingDTO.users
@@ -196,37 +202,14 @@ class AddEditMeetingViewmodel @Inject constructor(
                         meetingMembers.forEach { member ->
                             hashMap[member] = true
                         }
-                        _state.update { currentState ->
-                            currentState.copy(
-                                memberHashMap = hashMap,
-                                isLoading = false
-                            )
-                        }
                     }
                 }
             }
-        }
-    }
-
-    private fun loadAllAppUsers() {
-        if(allAppUsers == null) {
-            viewModelScope.launch{
-                _state.update { currentState ->
-                    currentState.copy(
-                        isLoading = true
-                    )
-                }
-                allAppUsers = userRepository.getAllAppUsers()
-                val hashMap: HashMap<UserDTO, Boolean> = hashMapOf()
-                allAppUsers?.forEach { user ->
-                    hashMap[user] = user.userId == userId
-                }
-                _state.update { currentState ->
-                    currentState.copy(
-                        isLoading = false,
-                        memberHashMap = hashMap
-                    )
-                }
+            _state.update { currentState ->
+                currentState.copy(
+                    memberHashMap = hashMap,
+                    isLoading = false
+                )
             }
         }
     }
