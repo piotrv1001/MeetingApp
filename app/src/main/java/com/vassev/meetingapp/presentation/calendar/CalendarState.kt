@@ -5,5 +5,6 @@ import com.vassev.meetingapp.domain.model.SpecificDay
 
 data class CalendarState(
     val isLoading: Boolean = false,
-    val plans: List<Plan> = emptyList()
+    val plans: List<Plan> = emptyList(),
+    val specificDay: SpecificDay = SpecificDay(0, 0, 0)
 )
