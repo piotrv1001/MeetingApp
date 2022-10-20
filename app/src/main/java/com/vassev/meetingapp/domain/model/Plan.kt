@@ -1,6 +1,11 @@
 package com.vassev.meetingapp.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Plan(
-    val fromDate: Long,
-    val toDate: Long
+    val fromHour: Int,
+    val toHour: Int,
+    val fromMinute: Int,
+    val toMinute: Int,
 )
