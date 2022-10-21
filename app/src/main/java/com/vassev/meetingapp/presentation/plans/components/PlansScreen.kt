@@ -5,11 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.sharp.Cancel
+import androidx.compose.material.icons.sharp.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.vassev.meetingapp.R
 import com.vassev.meetingapp.domain.util.DateUtil
@@ -43,7 +49,6 @@ fun PlansScreen(
     navController: NavController,
 ) {
     val state by viewModel.state.collectAsState()
-//    val dayOfWeek by viewModel.dayOfWeek.collectAsState()
     val dayOfWeek = viewModel.dayOfWeek
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
@@ -69,6 +74,19 @@ fun PlansScreen(
         }
     }
     val dayOfWeekName = DateUtil.getDayOfWeekName(dayOfWeek)
+    if(state.showDialog) {
+        Dialog(
+            onDismissRequest = { viewModel.onEvent(SharedPlanEvent.CloseDialogClicked) }
+        ) {
+            DialogContent(
+                removingRepeatedPlan = state.removingRepeatedPlan,
+                closeDialog = { viewModel.onEvent(SharedPlanEvent.CloseDialogClicked) },
+                state = state,
+                deleteOnceClick = { viewModel.onEvent(SharedPlanEvent.RemoveOnceRadioButtonClicked) },
+                deleteAllClick = { viewModel.onEvent(SharedPlanEvent.RemoveALlRadioButtonClicked) }
+            )
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -276,6 +294,25 @@ fun PlansScreen(
                                 color = Color(0xFF06A94D),
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Button(
+                            onClick = { viewModel.onEvent(SharedPlanEvent.RemovePlanButtonClicked(plan.repeat)) },
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.LightGray,
+                                contentColor = Color.Black
+                            ),
+                            contentPadding = PaddingValues(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                tint = Color.Black,
+                                contentDescription = "Remove plan",
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                     }

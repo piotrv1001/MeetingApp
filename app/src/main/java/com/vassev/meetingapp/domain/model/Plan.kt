@@ -8,4 +8,14 @@ data class Plan(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
-)
+) {
+    fun toPlanWithType(repeat: Boolean): PlanWithType {
+        return PlanWithType(
+            fromHour = fromHour,
+            fromMinute = fromMinute,
+            toHour = toHour,
+            toMinute = toMinute,
+            repeat = repeat
+        )
+    }
+}

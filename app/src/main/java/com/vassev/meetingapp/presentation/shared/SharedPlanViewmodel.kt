@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vassev.meetingapp.domain.model.Plan
+import com.vassev.meetingapp.domain.model.PlanWithType
 import com.vassev.meetingapp.domain.model.SpecificDay
 import com.vassev.meetingapp.domain.repository.PlanRepository
 import com.vassev.meetingapp.domain.requests.OneTimePlanRequest
@@ -33,10 +34,6 @@ class SharedPlanViewmodel @Inject constructor(
         state.plans.sortedBy { it.fromHour }.take(2)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-//    val dayOfWeek = state.map { state ->
-//        LocalDate.of(state.specificDay.year, state.specificDay.month, state.specificDay.day).dayOfWeek.value
-//    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0)
-
     var dayOfWeek: Int = 0
 
     private val resultChannel = Channel<Resource<Unit>>()
@@ -44,7 +41,7 @@ class SharedPlanViewmodel @Inject constructor(
 
     private val userId = prefs.getString("userId", "ERROR") ?: ""
 
-    private val dayHashMap = hashMapOf<SpecificDay, List<Plan>>()
+    private val dayHashMap = hashMapOf<SpecificDay, List<PlanWithType>>()
 
     init {
         initializeState()
@@ -93,6 +90,35 @@ class SharedPlanViewmodel @Inject constructor(
             is SharedPlanEvent.AddPlanButtonClicked -> {
                 addPlan()
             }
+            is SharedPlanEvent.RemovePlanButtonClicked -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        showDialog = true,
+                        removingRepeatedPlan = event.repeat
+                    )
+                }
+            }
+            is SharedPlanEvent.CloseDialogClicked -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        showDialog = false
+                    )
+                }
+            }
+            is SharedPlanEvent.RemoveOnceRadioButtonClicked -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        removeEveryWeek = false
+                    )
+                }
+            }
+            is SharedPlanEvent.RemoveALlRadioButtonClicked -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        removeEveryWeek = true
+                    )
+                }
+            }
         }
     }
 
@@ -133,12 +159,12 @@ class SharedPlanViewmodel @Inject constructor(
                 } else {
                     val oneTimePlanList = response.oneTimePlan?.plans
                     val repeatedPlanList = response.repeatedPlan?.plans
-                    val resultList: MutableList<Plan> = ArrayList()
+                    val resultList: MutableList<PlanWithType> = ArrayList()
                     if(oneTimePlanList != null) {
-                        resultList.addAll(oneTimePlanList)
+                        resultList.addAll(oneTimePlanList.map { it.toPlanWithType(false) })
                     }
                     if(repeatedPlanList != null) {
-                        resultList.addAll(repeatedPlanList)
+                        resultList.addAll(repeatedPlanList.map { it.toPlanWithType(true) })
                     }
                     _state.update { currentState ->
                         currentState.copy(
@@ -218,12 +244,12 @@ class SharedPlanViewmodel @Inject constructor(
                 } else {
                     val oneTimePlanList = response.oneTimePlan?.plans
                     val repeatedPlanList = response.repeatedPlan?.plans
-                    val resultList: MutableList<Plan> = ArrayList()
+                    val resultList: MutableList<PlanWithType> = ArrayList()
                     if(oneTimePlanList != null) {
-                        resultList.addAll(oneTimePlanList)
+                        resultList.addAll(oneTimePlanList.map { it.toPlanWithType(false) })
                     }
                     if(repeatedPlanList != null) {
-                        resultList.addAll(repeatedPlanList)
+                        resultList.addAll(repeatedPlanList.map { it.toPlanWithType(true) })
                     }
                     _state.update { currentState ->
                         currentState.copy(
@@ -258,7 +284,6 @@ class SharedPlanViewmodel @Inject constructor(
                 specificDay = specificDay
             )
         }
-//        loadPlansForSpecificDay(specificDay)
     }
 
     private fun updateDayOfWeek() {

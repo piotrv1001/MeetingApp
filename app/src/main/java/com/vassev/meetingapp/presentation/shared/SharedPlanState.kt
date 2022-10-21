@@ -1,15 +1,18 @@
 package com.vassev.meetingapp.presentation.shared
 
-import com.vassev.meetingapp.domain.model.Plan
+import com.vassev.meetingapp.domain.model.PlanWithType
 import com.vassev.meetingapp.domain.model.SpecificDay
 
 data class SharedPlanState(
     val isLoading: Boolean = false,
-    val plans: List<Plan> = emptyList(),
+    val plans: List<PlanWithType> = emptyList(),
     val specificDay: SpecificDay = SpecificDay(0, 0, 0),
     val fromHour: String = "",
     val fromMinute: String = "",
     val toHour: String = "",
     val toMinute: String = "",
-    val isRepeatChecked: Boolean = false
+    val isRepeatChecked: Boolean = false,
+    val showDialog: Boolean = false,
+    val removingRepeatedPlan: Boolean = false,
+    val removeEveryWeek: Boolean = false
 )
