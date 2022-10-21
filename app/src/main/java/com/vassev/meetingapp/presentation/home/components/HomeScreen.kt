@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.vassev.meetingapp.domain.util.DateUtil
 import com.vassev.meetingapp.presentation.home.HomeEvent
 import com.vassev.meetingapp.presentation.home.HomeViewmodel
 import com.vassev.meetingapp.presentation.util.Screen

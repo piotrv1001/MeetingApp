@@ -1,7 +1,9 @@
 package com.vassev.meetingapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.vassev.meetingapp.presentation.plans.components.PlansScreen
 import com.vassev.meetingapp.presentation.register.components.RegisterScreen
 import com.vassev.meetingapp.presentation.search.components.SearchScreen
 import com.vassev.meetingapp.presentation.settings.components.SettingsScreen
+import com.vassev.meetingapp.presentation.shared.SharedPlanViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
 
 @Composable
@@ -24,7 +27,7 @@ fun Navigation(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    NavHost(navController = navController, startDestination = Screen.RegisterScreen.route, modifier = modifier) {
+    NavHost(navController = navController, startDestination = Screen.RegisterScreen.route, modifier = modifier, route = "Parent") {
         composable(route = Screen.RegisterScreen.route) {
             RegisterScreen(navController = navController)
         }
@@ -42,7 +45,11 @@ fun Navigation(
             AddEditMeetingScreen(navController = navController)
         }
         composable(route = Screen.CalendarScreen.route) {
-            CalendarScreen(navController = navController)
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("Parent")
+            }
+            val sharedPlanViewmodel = hiltViewModel<SharedPlanViewmodel>(parentEntry)
+            CalendarScreen(navController = navController, viewModel = sharedPlanViewmodel)
         }
         composable(
             route = Screen.ChatScreen.route + "/{meetingId}",
@@ -76,8 +83,17 @@ fun Navigation(
         ) {
             MeetingInfoScreen(navController = navController, meetingId = it.arguments?.getString("meetingId"))
         }
-        composable(route = Screen.PlansScreen.route) {
-            PlansScreen(navController = navController)
+        composable(
+            route = Screen.PlansScreen.route
+        ) {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("Parent")
+            }
+            val sharedPlanViewmodel = hiltViewModel<SharedPlanViewmodel>(parentEntry)
+            PlansScreen(
+                navController = navController,
+                viewModel = sharedPlanViewmodel
+            )
         }
         composable(route = Screen.SearchScreen.route) {
             SearchScreen(navController = navController)

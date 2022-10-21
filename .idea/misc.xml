@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/ic_baseline_calendar_today_24.xml" value="0.323" />
         <entry key="app/src/main/res/drawable/ic_outline_calendar_today_24.xml" value="0.323" />
+        <entry key="app/src/main/res/drawable/ic_repeat.xml" value="0.1555" />
       </map>
     </option>
   </component>

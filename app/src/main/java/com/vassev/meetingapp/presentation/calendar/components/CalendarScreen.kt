@@ -3,6 +3,7 @@ package com.vassev.meetingapp.presentation.calendar.components
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -22,26 +23,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.vassev.meetingapp.domain.model.SpecificDay
 import com.vassev.meetingapp.domain.util.DateUtil
 import com.vassev.meetingapp.domain.util.Resource
-import com.vassev.meetingapp.presentation.calendar.CalendarEvent
-import com.vassev.meetingapp.presentation.calendar.CalendarViewmodel
+import com.vassev.meetingapp.presentation.shared.SharedPlanEvent
+import com.vassev.meetingapp.presentation.shared.SharedPlanViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
 import java.time.LocalDate
+import java.util.*
 
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewmodel = hiltViewModel(),
+    viewModel: SharedPlanViewmodel,
     navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
     val firstTwoPlans by viewModel.firstTwoPlans.collectAsState()
+//    val dayOfWeek by viewModel.dayOfWeek.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
-        viewModel.calendarResults.collect { result ->
+        viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(state.specificDay))
+        viewModel.sharedPlanResults.collect { result ->
             when(result) {
                 is Resource.Error -> {
                     Toast.makeText(
@@ -59,17 +62,23 @@ fun CalendarScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, state.specificDay.year)
+        calendar.set(Calendar.MONTH, state.specificDay.month - 1)
+        calendar.set(Calendar.DAY_OF_MONTH, state.specificDay.day)
+        val dateLong = calendar.timeInMillis
         AndroidView(factory = { CalendarView(it) }, update = {
+            it.setDate(dateLong, false, false)
             it.setOnDateChangeListener{ _, year, month, day ->
-                val localDate = LocalDate.of(year, month + 1, day)
-                val dayOfWeek = localDate.dayOfWeek.value
                 val specificDay = SpecificDay(day, month + 1, year)
-                viewModel.onEvent(CalendarEvent.SpecificDaySelected(specificDay, dayOfWeek))
+                viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(specificDay))
             }
         })
         Spacer(modifier = Modifier.height(32.dp))
         Card(
-            modifier = Modifier.height(150.dp).fillMaxWidth(0.9f),
+            modifier = Modifier
+                .height(150.dp)
+                .fillMaxWidth(0.9f),
             shape = RoundedCornerShape(10.dp),
             elevation = 18.dp
         ) {
@@ -82,8 +91,10 @@ fun CalendarScreen(
                 }
             } else {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { navController.navigate(Screen.PlansScreen.route) },
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Column(
@@ -136,6 +147,7 @@ fun CalendarScreen(
                             }
                         }
                         if(firstTwoPlans.size >= 2) {
+                            Spacer(modifier = Modifier.height(16.dp))
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
