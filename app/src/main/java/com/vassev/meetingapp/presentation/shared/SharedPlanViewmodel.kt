@@ -260,6 +260,7 @@ class SharedPlanViewmodel @Inject constructor(
                     fromMinute = "",
                     toHour = "",
                     toMinute = "",
+                    isRepeatChecked = false,
                     isLoading = false
                 )
             }
@@ -354,7 +355,6 @@ class SharedPlanViewmodel @Inject constructor(
                         )
                     }
                     dayHashMap[state.value.specificDay] = resultList
-                    Log.d("PLANS SIZE", resultList.size.toString())
                 }
             }
         }

@@ -17,7 +17,6 @@ import com.vassev.meetingapp.presentation.login.components.LoginScreen
 import com.vassev.meetingapp.presentation.meeting_info.components.MeetingInfoScreen
 import com.vassev.meetingapp.presentation.plans.components.PlansScreen
 import com.vassev.meetingapp.presentation.register.components.RegisterScreen
-import com.vassev.meetingapp.presentation.search.components.SearchScreen
 import com.vassev.meetingapp.presentation.settings.components.SettingsScreen
 import com.vassev.meetingapp.presentation.shared.SharedPlanViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
@@ -94,9 +93,6 @@ fun Navigation(
                 navController = navController,
                 viewModel = sharedPlanViewmodel
             )
-        }
-        composable(route = Screen.SearchScreen.route) {
-            SearchScreen(navController = navController)
         }
         composable(route = Screen.SettingsScreen.route) {
             SettingsScreen(navController = navController)

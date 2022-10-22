@@ -1,6 +1,5 @@
 package com.vassev.meetingapp.presentation.chat.components
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,12 +35,15 @@ fun ChatScreen(
     navController: NavController,
     meetingId: String?
 ) {
+    val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     LaunchedEffect(true) {
         viewModel.chatResults.collect { result ->
             when(result) {
                 is Resource.Error -> {
-                    Toast.makeText(context, result.message, Toast.LENGTH_LONG).show()
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = "Error: ${result.message}"
+                    )
                 }
                 else -> {}
             }
@@ -72,127 +74,131 @@ fun ChatScreen(
             CircularProgressIndicator()
         }
     } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            scaffoldState = scaffoldState
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                IconButton(
-                    onClick = { navController.navigateUp() },
-                    modifier = Modifier
-                        .size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Go back",
-                        tint = Color.Blue
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            LazyColumn(
+            Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                reverseLayout = true
-            ){
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
-                items(state.messages) { message ->
-                    val isOwnMessage = message.userId == viewModel.userId
-                    Box(
-                        contentAlignment = if(isOwnMessage) {
-                            Alignment.CenterEnd
-                        } else Alignment.CenterStart,
-                        modifier = Modifier.fillMaxWidth()
+                    .fillMaxSize()
+                    .padding(16.dp)
+
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(
+                        onClick = { navController.navigateUp() },
+                        modifier = Modifier
+                            .size(24.dp)
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .width(200.dp)
-                                .drawBehind {
-                                    val cornerRadius = 10.dp.toPx()
-                                    val triangleHeight = 20.dp.toPx()
-                                    val triangleWidth = 25.dp.toPx()
-                                    val trianglePath = Path().apply {
-                                        if (isOwnMessage) {
-                                            moveTo(size.width, size.height - cornerRadius)
-                                            lineTo(size.width, size.height + triangleHeight)
-                                            lineTo(
-                                                size.width - triangleWidth,
-                                                size.height - cornerRadius
-                                            )
-                                            close()
-                                        } else {
-                                            moveTo(0f, size.height - cornerRadius)
-                                            lineTo(0f, size.height + triangleHeight)
-                                            lineTo(triangleWidth, size.height - cornerRadius)
-                                            close()
-                                        }
-                                    }
-                                    drawPath(
-                                        path = trianglePath,
-                                        color = if (isOwnMessage) Color(0xFF5b86e5) else Color.DarkGray
-                                    )
-                                }
-                                .background(
-                                    brush = if (isOwnMessage) Brush.horizontalGradient(
-                                        colors = listOf(
-                                            Color(0xFF36d1dc ),
-                                            Color(0xFF5b86e5)
-                                        )
-                                    ) else Brush.horizontalGradient(
-                                        colors = listOf(
-                                            Color.DarkGray,
-                                            Color.DarkGray
-                                        )
-                                    ),
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = message.username,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                            Text(
-                                text = message.text,
-                                color = Color.White
-                            )
-                            Text(
-                                text = message.formattedTime,
-                                color = Color.White,
-                                modifier = Modifier.align(Alignment.End)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Go back",
+                            tint = Color.Blue
+                        )
                     }
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                TextField(
-                    value = state.messageText,
-                    onValueChange = { viewModel.onEvent(ChatEvent.MessageChanged(it)) },
-                    placeholder = {
-                        Text(text = "Enter a message")
-                    },
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(
-                    onClick = { viewModel.onEvent(ChatEvent.SendMessage) }
+                Spacer(modifier = Modifier.height(32.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    reverseLayout = true
+                ){
+                    item {
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+                    items(state.messages) { message ->
+                        val isOwnMessage = message.userId == viewModel.userId
+                        Box(
+                            contentAlignment = if(isOwnMessage) {
+                                Alignment.CenterEnd
+                            } else Alignment.CenterStart,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .drawBehind {
+                                        val cornerRadius = 10.dp.toPx()
+                                        val triangleHeight = 20.dp.toPx()
+                                        val triangleWidth = 25.dp.toPx()
+                                        val trianglePath = Path().apply {
+                                            if (isOwnMessage) {
+                                                moveTo(size.width, size.height - cornerRadius)
+                                                lineTo(size.width, size.height + triangleHeight)
+                                                lineTo(
+                                                    size.width - triangleWidth,
+                                                    size.height - cornerRadius
+                                                )
+                                                close()
+                                            } else {
+                                                moveTo(0f, size.height - cornerRadius)
+                                                lineTo(0f, size.height + triangleHeight)
+                                                lineTo(triangleWidth, size.height - cornerRadius)
+                                                close()
+                                            }
+                                        }
+                                        drawPath(
+                                            path = trianglePath,
+                                            color = if (isOwnMessage) Color(0xFF5b86e5) else Color.DarkGray
+                                        )
+                                    }
+                                    .background(
+                                        brush = if (isOwnMessage) Brush.horizontalGradient(
+                                            colors = listOf(
+                                                Color(0xFF36d1dc),
+                                                Color(0xFF5b86e5)
+                                            )
+                                        ) else Brush.horizontalGradient(
+                                            colors = listOf(
+                                                Color.DarkGray,
+                                                Color.DarkGray
+                                            )
+                                        ),
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Text(
+                                    text = message.username,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = message.text,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = message.formattedTime,
+                                    color = Color.White,
+                                    modifier = Modifier.align(Alignment.End)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "Send", tint = Color(0xFF36d1dc ))
+                    TextField(
+                        value = state.messageText,
+                        onValueChange = { viewModel.onEvent(ChatEvent.MessageChanged(it)) },
+                        placeholder = {
+                            Text(text = "Enter a message")
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(
+                        onClick = { viewModel.onEvent(ChatEvent.SendMessage) }
+                    ) {
+                        Icon(imageVector = Icons.Default.Send, contentDescription = "Send", tint = Color(0xFF36d1dc ))
+                    }
                 }
             }
         }
-
     }
 }

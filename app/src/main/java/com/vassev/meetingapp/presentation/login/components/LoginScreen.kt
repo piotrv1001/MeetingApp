@@ -1,6 +1,5 @@
 package com.vassev.meetingapp.presentation.login.components
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -33,6 +32,7 @@ fun LoginScreen(
    viewModel: LoginViewmodel = hiltViewModel(),
    navController: NavController
 ) {
+   val scaffoldState = rememberScaffoldState()
    val state by viewModel.state.collectAsState()
    val context = LocalContext.current
    LaunchedEffect(viewModel, context) {
@@ -44,12 +44,11 @@ fun LoginScreen(
                }
             }
             is Resource.Error -> {
-               Toast.makeText(
-                  context,
-                  "Error: ${result.message}",
-                  Toast.LENGTH_LONG
-               ).show()
+               scaffoldState.snackbarHostState.showSnackbar(
+                  message = "Error: ${result.message}"
+               )
             }
+            else -> {}
          }
       }
    }
@@ -63,64 +62,69 @@ fun LoginScreen(
          CircularProgressIndicator()
       }
    } else {
-      Column(
-         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-         horizontalAlignment = Alignment.CenterHorizontally,
-         verticalArrangement = Arrangement.Center
+      Scaffold(
+         modifier = Modifier.fillMaxSize(),
+         scaffoldState = scaffoldState
       ) {
-         Text(
-            text = "Login",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-         )
-         Spacer(modifier = Modifier.height(32.dp))
-         TextField(
-            value = state.email,
-            leadingIcon = {
-               Icon(imageVector = Icons.Default.Email, contentDescription = "email")
-            },
-            onValueChange = {
-               viewModel.onEvent(LoginEvent.EmailChanged(it))
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-               Text(text = "Email")
-            }
-         )
-         Spacer(modifier = Modifier.height(16.dp))
-         TextField(
-            value = state.password,
-            leadingIcon = {
-               Icon(imageVector = Icons.Default.Password, contentDescription = "password")
-            },
-            onValueChange = {
-               viewModel.onEvent(LoginEvent.PasswordChanged(it))
-            },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-               Text(text = "Password")
-            }
-         )
-         Spacer(modifier = Modifier.height(32.dp))
-         Button(
+         Column(
             modifier = Modifier
-               .fillMaxWidth(0.8f),
-            onClick = { viewModel.onEvent(LoginEvent.LoginButtonClicked) },
+               .fillMaxSize()
+               .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
          ) {
-            Text(text = "Login")
-         }
-         Spacer(modifier = Modifier.height(16.dp))
-         OutlinedButton(
-            modifier = Modifier
-               .fillMaxWidth(0.8f),
-            onClick = { navController.navigate(Screen.RegisterScreen.route) },
-            border = BorderStroke(1.dp, Color.Gray),
-            shape = RoundedCornerShape(10),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
-         ) {
-            Text("Register")
+            Text(
+               text = "Login",
+               fontSize = 24.sp,
+               fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            TextField(
+               value = state.email,
+               leadingIcon = {
+                  Icon(imageVector = Icons.Default.Email, contentDescription = "email")
+               },
+               onValueChange = {
+                  viewModel.onEvent(LoginEvent.EmailChanged(it))
+               },
+               modifier = Modifier.fillMaxWidth(),
+               placeholder = {
+                  Text(text = "Email")
+               }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+               value = state.password,
+               leadingIcon = {
+                  Icon(imageVector = Icons.Default.Password, contentDescription = "password")
+               },
+               onValueChange = {
+                  viewModel.onEvent(LoginEvent.PasswordChanged(it))
+               },
+               modifier = Modifier.fillMaxWidth(),
+               placeholder = {
+                  Text(text = "Password")
+               }
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+               modifier = Modifier
+                  .fillMaxWidth(0.8f),
+               onClick = { viewModel.onEvent(LoginEvent.LoginButtonClicked) },
+            ) {
+               Text(text = "Login")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(
+               modifier = Modifier
+                  .fillMaxWidth(0.8f),
+               onClick = { navController.navigate(Screen.RegisterScreen.route) },
+               border = BorderStroke(1.dp, Color.Gray),
+               shape = RoundedCornerShape(10),
+               colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Gray)
+            ) {
+               Text("Register")
+            }
          }
       }
    }

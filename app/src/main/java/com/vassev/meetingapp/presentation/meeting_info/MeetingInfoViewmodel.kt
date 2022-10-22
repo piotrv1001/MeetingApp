@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vassev.meetingapp.data.remote.dto.MeetingDTO
 import com.vassev.meetingapp.domain.repository.MeetingRepository
+import com.vassev.meetingapp.domain.service.GenerateMeetingTimeService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeetingInfoViewmodel @Inject constructor(
-    private val meetingRepository: MeetingRepository
+    private val meetingRepository: MeetingRepository,
+    private val generateMeetingTimeService: GenerateMeetingTimeService
 ) : ViewModel() {
 
     private val _meeting = MutableStateFlow<MeetingDTO?>(null)
@@ -27,6 +29,9 @@ class MeetingInfoViewmodel @Inject constructor(
             is MeetingInfoEvent.LoadMeetingData -> {
                 loadMeetingData(event.meetingId)
             }
+            is MeetingInfoEvent.GenerateMeetingTimeButtonClicked -> {
+                generateMeetingTime()
+            }
         }
     }
 
@@ -36,6 +41,10 @@ class MeetingInfoViewmodel @Inject constructor(
             _meeting.value = meetingRepository.getMeetingById(meetingId)
             _isLoading.value = false
         }
+    }
+
+    private fun generateMeetingTime() {
+        TODO("CALL THE BACKEND")
     }
     
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -29,7 +28,6 @@ import com.vassev.meetingapp.data.remote.dto.UserDTO
 import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.add_edit_meeting.AddEditMeetingEvent
 import com.vassev.meetingapp.presentation.add_edit_meeting.AddEditMeetingViewmodel
-import com.vassev.meetingapp.presentation.register.RegisterEvent
 
 @Composable
 fun AddEditMeetingScreen(

@@ -10,6 +10,5 @@ sealed class Screen(val route: String) {
     object MeetingInfoScreen: Screen("meeting_info_screen")
     object PlansScreen: Screen("plans_screen")
     object RegisterScreen: Screen("register_screen")
-    object SearchScreen: Screen("search_screen")
     object SettingsScreen: Screen("settings_screen")
 }

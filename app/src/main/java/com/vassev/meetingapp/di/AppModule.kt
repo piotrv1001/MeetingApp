@@ -4,8 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.vassev.meetingapp.data.remote.repository.*
+import com.vassev.meetingapp.data.remote.service.GenerateMeetingTimeServiceImpl
 import com.vassev.meetingapp.data.remote.service.WebSocketServiceImpl
 import com.vassev.meetingapp.domain.repository.*
+import com.vassev.meetingapp.domain.service.GenerateMeetingTimeService
 import com.vassev.meetingapp.domain.service.WebSocketService
 import dagger.Module
 import dagger.Provides
@@ -75,6 +77,12 @@ object AppModule {
     @Singleton
     fun providePlanRepository(client: HttpClient): PlanRepository {
         return PlanRepositoryImpl(client)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGenerateMeetingTimeService(client: HttpClient): GenerateMeetingTimeService {
+        return GenerateMeetingTimeServiceImpl(client)
     }
 
 }
