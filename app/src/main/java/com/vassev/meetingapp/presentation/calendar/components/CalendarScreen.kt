@@ -39,8 +39,6 @@ fun CalendarScreen(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
-    val firstTwoPlans by viewModel.firstTwoPlans.collectAsState()
-//    val dayOfWeek by viewModel.dayOfWeek.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
         viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(state.specificDay))
@@ -125,7 +123,7 @@ fun CalendarScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        if(firstTwoPlans.isNotEmpty()) {
+                        if(state.plans.isNotEmpty()) {
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
@@ -146,7 +144,7 @@ fun CalendarScreen(
                                 )
                             }
                         }
-                        if(firstTwoPlans.size >= 2) {
+                        if(state.plans.size >= 2) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Box(
                                 modifier = Modifier

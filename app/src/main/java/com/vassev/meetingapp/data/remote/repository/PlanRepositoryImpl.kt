@@ -100,12 +100,63 @@ class PlanRepositoryImpl(
 
     override suspend fun addExceptionToRepeatedPlan(addExceptionToRepeatedPlanRequest: AddExceptionToRepeatedPlanRequest): Resource<Unit> {
         return try {
-            val response: HttpResponse = client.post("http://${PlanRepository.Endpoints.AddException.url}") {
+            val response: HttpResponse = client.put("http://${PlanRepository.Endpoints.AddException.url}") {
                 contentType(ContentType.Application.Json)
                 body = addExceptionToRepeatedPlanRequest
             }
             if(response.status == HttpStatusCode.OK) {
-                Resource.Success()
+                Resource.SuccessDelete()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
+        }
+    }
+
+    override suspend fun deleteOneTimePlan(oneTimePlanRequest: OneTimePlanRequest): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.delete("http://${PlanRepository.Endpoints.OneTimePlan.url}") {
+                contentType(ContentType.Application.Json)
+                body = oneTimePlanRequest
+            }
+            if(response.status == HttpStatusCode.OK) {
+                Resource.SuccessDelete()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
+        }
+    }
+
+    override suspend fun deleteRepeatedPlan(repeatedPlanRequest: RepeatedPlanRequest): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.delete("http://${PlanRepository.Endpoints.RepeatedPlan.url}") {
+                contentType(ContentType.Application.Json)
+                body = repeatedPlanRequest
+            }
+            if(response.status == HttpStatusCode.OK) {
+                Resource.SuccessDelete()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
+        }
+    }
+
+    override suspend fun deletePlanFromOneTimePlan(oneTimePlanRequest: OneTimePlanRequest): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.put("http://${PlanRepository.Endpoints.OneTimePlan.url}/deletePlan") {
+                contentType(ContentType.Application.Json)
+                body = oneTimePlanRequest
+            }
+            if(response.status == HttpStatusCode.OK) {
+                Resource.SuccessDelete()
             } else {
                 Resource.Error("Http Error")
             }

@@ -68,6 +68,13 @@ fun PlansScreen(
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                is Resource.SuccessDelete -> {
+                    Toast.makeText(
+                        context,
+                        "Successfully deleted plan!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
                 else -> {
                 }
             }
@@ -79,11 +86,12 @@ fun PlansScreen(
             onDismissRequest = { viewModel.onEvent(SharedPlanEvent.CloseDialogClicked) }
         ) {
             DialogContent(
-                removingRepeatedPlan = state.removingRepeatedPlan,
+                plan = state.currentPLan,
                 closeDialog = { viewModel.onEvent(SharedPlanEvent.CloseDialogClicked) },
                 state = state,
                 deleteOnceClick = { viewModel.onEvent(SharedPlanEvent.RemoveOnceRadioButtonClicked) },
-                deleteAllClick = { viewModel.onEvent(SharedPlanEvent.RemoveALlRadioButtonClicked) }
+                deleteAllClick = { viewModel.onEvent(SharedPlanEvent.RemoveALlRadioButtonClicked) },
+                deleteConfirmClick = { viewModel.onEvent(SharedPlanEvent.DeletePlanClicked) }
             )
         }
     }
@@ -298,7 +306,7 @@ fun PlansScreen(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
-                            onClick = { viewModel.onEvent(SharedPlanEvent.RemovePlanButtonClicked(plan.repeat)) },
+                            onClick = { viewModel.onEvent(SharedPlanEvent.RemovePlanButtonClicked(plan)) },
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),

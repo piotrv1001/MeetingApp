@@ -11,15 +11,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vassev.meetingapp.domain.model.PlanWithType
 import com.vassev.meetingapp.presentation.shared.SharedPlanState
 
 @Composable
 fun DialogContent(
-    removingRepeatedPlan: Boolean,
+    plan: PlanWithType,
     closeDialog: () -> Unit,
     state: SharedPlanState,
     deleteOnceClick: () -> Unit,
-    deleteAllClick: () -> Unit
+    deleteAllClick: () -> Unit,
+    deleteConfirmClick: () -> Unit
 ) {
 
     Card(
@@ -51,7 +53,7 @@ fun DialogContent(
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            if(removingRepeatedPlan) {
+            if(plan.repeat) {
                 Column {
                     Row {
                        Text(
@@ -86,7 +88,7 @@ fun DialogContent(
                 horizontalArrangement = Arrangement.End
             ) {
                 Button(
-                    onClick = {  },
+                    onClick = closeDialog,
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.White
                     ),
@@ -101,7 +103,7 @@ fun DialogContent(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = {  },
+                    onClick = deleteConfirmClick,
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.White
                     ),

@@ -22,6 +22,12 @@ interface PlanRepository {
 
     suspend fun addExceptionToRepeatedPlan(addExceptionToRepeatedPlanRequest: AddExceptionToRepeatedPlanRequest): Resource<Unit>
 
+    suspend fun deletePlanFromOneTimePlan(oneTimePlanRequest: OneTimePlanRequest): Resource<Unit>
+
+    suspend fun deleteOneTimePlan(oneTimePlanRequest: OneTimePlanRequest): Resource<Unit>
+
+    suspend fun deleteRepeatedPlan(repeatedPlanRequest: RepeatedPlanRequest): Resource<Unit>
+
     sealed class Endpoints(val url: String) {
         object Plan: Endpoints("${Constants.BASE_URL}/plan")
         object OneTimePlan: Endpoints("${Constants.BASE_URL}/plan/oneTimePlan")
