@@ -18,11 +18,8 @@ class MeetingInfoViewmodel @Inject constructor(
     private val generateMeetingTimeService: GenerateMeetingTimeService
 ) : ViewModel() {
 
-    private val _meeting = MutableStateFlow<MeetingDTO?>(null)
-    val meeting = _meeting.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    private val _state = MutableStateFlow(MeetingInfoState())
+    val state = _state.asStateFlow()
 
     fun onEvent(event: MeetingInfoEvent) {
         when(event) {
@@ -37,14 +34,38 @@ class MeetingInfoViewmodel @Inject constructor(
 
     private fun loadMeetingData(meetingId: String) {
         viewModelScope.launch{
-            _isLoading.value = true
-            _meeting.value = meetingRepository.getMeetingById(meetingId)
-            _isLoading.value = false
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoadingMeetingInfo = true
+                )
+            }
+            val meetingDTO = meetingRepository.getMeetingById(meetingId)
+            _state.update { currentState ->
+                currentState.copy(
+                    meetingDTO = meetingDTO,
+                    isLoadingMeetingInfo = false
+                )
+            }
         }
     }
 
     private fun generateMeetingTime() {
-        TODO("CALL THE BACKEND")
+        viewModelScope.launch {
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoadingGeneratedTime = true
+                )
+            }
+            val generatedTimes = generateMeetingTimeService.generateMeetingTime(
+                meetingId = state.value.meetingDTO?.meetingId ?: ""
+            )
+            _state.update { currentState ->
+                currentState.copy(
+                    generatedTimes = generatedTimes,
+                    isLoadingGeneratedTime = false
+                )
+            }
+        }
     }
     
 }
