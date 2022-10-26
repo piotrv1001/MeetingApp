@@ -37,7 +37,7 @@ fun CalendarScreen(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
-        viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(state.specificDay))
+        viewModel.onEvent(SharedPlanEvent.ReloadData(state.specificDay))
         viewModel.sharedPlanResults.collect { result ->
             when(result) {
                 is Resource.Error -> {

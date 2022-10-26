@@ -14,6 +14,7 @@ import com.vassev.meetingapp.domain.requests.PlanRequest
 import com.vassev.meetingapp.domain.requests.RepeatedPlanRequest
 import com.vassev.meetingapp.domain.responses.PlanResponse
 import com.vassev.meetingapp.domain.util.Resource
+import com.vassev.meetingapp.presentation.home.HomeEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -41,17 +42,16 @@ class SharedPlanViewmodel @Inject constructor(
     private val dayHashMap = hashMapOf<SpecificDay, List<PlanWithType>>()
 
     init {
-        val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
-            userId = sharedPreferences.getString("userId", "ERROR") ?: ""
-            dayHashMap.clear()
-            loadPlansForSpecificDay(state.value.specificDay)
-        }
-        prefs.registerOnSharedPreferenceChangeListener(prefsListener)
         initializeState()
     }
 
     fun onEvent(event: SharedPlanEvent) {
         when(event) {
+            is SharedPlanEvent.ReloadData -> {
+                reloadUserId()
+                dayHashMap.clear()
+                loadPlansForSpecificDay(event.specificDay)
+            }
             is SharedPlanEvent.SpecificDaySelected -> {
                 loadPlansForSpecificDay(event.specificDay)
             }
@@ -126,6 +126,10 @@ class SharedPlanViewmodel @Inject constructor(
                 deleteCurrentPlan()
             }
         }
+    }
+
+    private fun reloadUserId() {
+        userId = prefs.getString("userId", "ERROR") ?: ""
     }
 
     private fun loadPlansForSpecificDay(specificDay: SpecificDay) {

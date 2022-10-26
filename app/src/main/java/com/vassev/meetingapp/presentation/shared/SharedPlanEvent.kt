@@ -5,6 +5,7 @@ import com.vassev.meetingapp.domain.model.SpecificDay
 
 sealed class SharedPlanEvent {
     data class SpecificDaySelected(val specificDay: SpecificDay): SharedPlanEvent()
+    data class ReloadData(val specificDay: SpecificDay): SharedPlanEvent()
     data class FromHourChanged(val newFromHour: String): SharedPlanEvent()
     data class FromMinuteChanged(val newFromMinute: String): SharedPlanEvent()
     data class ToHourChanged(val newToHour: String): SharedPlanEvent()
