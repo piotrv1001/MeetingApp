@@ -1,7 +1,6 @@
 package com.vassev.meetingapp.presentation.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -24,7 +23,7 @@ import com.vassev.meetingapp.presentation.util.Screen
 @Composable
 fun Navigation(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NavHost(navController = navController, startDestination = Screen.RegisterScreen.route, modifier = modifier, route = "Parent") {
         composable(route = Screen.RegisterScreen.route) {

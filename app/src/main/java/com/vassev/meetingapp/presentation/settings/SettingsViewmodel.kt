@@ -29,6 +29,7 @@ class SettingsViewmodel @Inject constructor(
         viewModelScope.launch {
             prefs.edit()
                 .remove("jwt")
+                .remove("userId")
                 .apply()
             resultChannel.send("log_out")
         }

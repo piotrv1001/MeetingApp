@@ -36,11 +36,17 @@ class SharedPlanViewmodel @Inject constructor(
     private val resultChannel = Channel<Resource<Unit>>()
     val sharedPlanResults = resultChannel.receiveAsFlow()
 
-    private val userId = prefs.getString("userId", "ERROR") ?: ""
+    private var userId = prefs.getString("userId", "ERROR") ?: ""
 
     private val dayHashMap = hashMapOf<SpecificDay, List<PlanWithType>>()
 
     init {
+        val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, s ->
+            userId = sharedPreferences.getString("userId", "ERROR") ?: ""
+            dayHashMap.clear()
+            loadPlansForSpecificDay(state.value.specificDay)
+        }
+        prefs.registerOnSharedPreferenceChangeListener(prefsListener)
         initializeState()
     }
 

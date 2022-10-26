@@ -178,7 +178,10 @@ fun MeetingInfoScreen(
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { viewModel.onEvent(MeetingInfoEvent.GenerateMeetingTimeButtonClicked) }) {
+            Button(
+                onClick = {  }
+//                onClick = { viewModel.onEvent(MeetingInfoEvent.GenerateMeetingTimeButtonClicked) }
+            ) {
                 Text(
                     text = "Generate meeting time"
                 )
