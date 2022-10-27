@@ -179,8 +179,7 @@ fun MeetingInfoScreen(
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = {  }
-//                onClick = { viewModel.onEvent(MeetingInfoEvent.GenerateMeetingTimeButtonClicked) }
+                onClick = { viewModel.onEvent(MeetingInfoEvent.GenerateMeetingTimeButtonClicked) }
             ) {
                 Text(
                     text = "Generate meeting time"
@@ -200,7 +199,7 @@ fun MeetingInfoScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     itemsIndexed(
-                        items = state.generatedTimes
+                        items = state.generatedTimes.filter{ it.plans.isNotEmpty() }.take(3)
                     ) { index, generatedTime ->
                         val dayOfWeek = LocalDate.of(generatedTime.specificDay.year, generatedTime.specificDay.month, generatedTime.specificDay.day).dayOfWeek.value
                         val dayOfWeekName = DateUtil.getDayOfWeekName(dayOfWeek)
@@ -208,10 +207,10 @@ fun MeetingInfoScreen(
                         val month = generatedTime.specificDay.month
                         val year = generatedTime.specificDay.year
                         val monthName = DateUtil.getMonthName(month)
-                        val fromHour = generatedTime.plan.fromHour
-                        val fromMinute = generatedTime.plan.fromMinute
-                        val toHour = generatedTime.plan.toHour
-                        val toMinute = generatedTime.plan.toMinute
+                        val fromHour = generatedTime.plans[0].fromHour
+                        val fromMinute = generatedTime.plans[0].fromMinute
+                        val toHour = generatedTime.plans[0].toHour
+                        val toMinute = generatedTime.plans[0].toMinute
                         val formattedPlan = DateUtil.getFormattedPlan(
                             fromHour = fromHour,
                             fromMinute = fromMinute,
