@@ -11,4 +11,5 @@ sealed class Screen(val route: String) {
     object PlansScreen: Screen("plans_screen")
     object RegisterScreen: Screen("register_screen")
     object SettingsScreen: Screen("settings_screen")
+    object GenerateTimeScreen: Screen("generate_time_screen")
 }

@@ -15,7 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MeetingInfoViewmodel @Inject constructor(
     private val meetingRepository: MeetingRepository,
-    private val generateMeetingTimeService: GenerateMeetingTimeService
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MeetingInfoState())
@@ -25,9 +24,6 @@ class MeetingInfoViewmodel @Inject constructor(
         when(event) {
             is MeetingInfoEvent.LoadMeetingData -> {
                 loadMeetingData(event.meetingId)
-            }
-            is MeetingInfoEvent.GenerateMeetingTimeButtonClicked -> {
-                generateMeetingTime()
             }
         }
     }
@@ -44,25 +40,6 @@ class MeetingInfoViewmodel @Inject constructor(
                 currentState.copy(
                     meetingDTO = meetingDTO,
                     isLoadingMeetingInfo = false
-                )
-            }
-        }
-    }
-
-    private fun generateMeetingTime() {
-        viewModelScope.launch {
-            _state.update { currentState ->
-                currentState.copy(
-                    isLoadingGeneratedTime = true
-                )
-            }
-            val generatedTimes = generateMeetingTimeService.generateMeetingTime(
-                meetingId = state.value.meetingDTO?.meetingId ?: ""
-            )
-            _state.update { currentState ->
-                currentState.copy(
-                    generatedTimes = generatedTimes,
-                    isLoadingGeneratedTime = false
                 )
             }
         }

@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.vassev.meetingapp.presentation.add_edit_meeting.components.AddEditMeetingScreen
 import com.vassev.meetingapp.presentation.calendar.components.CalendarScreen
 import com.vassev.meetingapp.presentation.chat.components.ChatScreen
+import com.vassev.meetingapp.presentation.generate_time.components.GenerateTimeScreen
 import com.vassev.meetingapp.presentation.home.components.HomeScreen
 import com.vassev.meetingapp.presentation.login.components.LoginScreen
 import com.vassev.meetingapp.presentation.meeting_info.components.MeetingInfoScreen
@@ -95,6 +96,19 @@ fun Navigation(
         }
         composable(route = Screen.SettingsScreen.route) {
             SettingsScreen(navController = navController)
+        }
+        composable(
+            route = Screen.GenerateTimeScreen.route + "/{meetingId}",
+            arguments = listOf(
+                navArgument(
+                    name = "meetingId"
+                ){
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
+            GenerateTimeScreen(navController = navController, meetingId = it.arguments?.getString("meetingId"))
         }
     }
 }

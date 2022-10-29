@@ -122,7 +122,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 location = state.value.location,
                 duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
                 // change date later
-                date = 0,
+                date = "",
                 users = selectedUsers.value.keys.map { it.userId }
             )
             viewModelScope.launch {
@@ -146,7 +146,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 location = state.value.location,
                 duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
                 // change date later
-                date = 0,
+                date = "",
                 users = selectedUsers.value.keys.map { it.userId }
             )
             viewModelScope.launch {

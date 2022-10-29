@@ -179,79 +179,11 @@ fun MeetingInfoScreen(
             }
             Spacer(modifier = Modifier.height(32.dp))
             Button(
-                onClick = { viewModel.onEvent(MeetingInfoEvent.GenerateMeetingTimeButtonClicked) }
+                onClick = { navController.navigate(Screen.GenerateTimeScreen.route + "/$meetingId") }
             ) {
                 Text(
                     text = "Generate meeting time"
                 )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            if(state.isLoadingGeneratedTime) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    itemsIndexed(
-                        items = state.generatedTimes.filter{ it.plans.isNotEmpty() }.take(3)
-                    ) { index, generatedTime ->
-                        val dayOfWeek = LocalDate.of(generatedTime.specificDay.year, generatedTime.specificDay.month, generatedTime.specificDay.day).dayOfWeek.value
-                        val dayOfWeekName = DateUtil.getDayOfWeekName(dayOfWeek)
-                        val day = generatedTime.specificDay.day
-                        val month = generatedTime.specificDay.month
-                        val year = generatedTime.specificDay.year
-                        val monthName = DateUtil.getMonthName(month)
-                        val fromHour = generatedTime.plans[0].fromHour
-                        val fromMinute = generatedTime.plans[0].fromMinute
-                        val toHour = generatedTime.plans[0].toHour
-                        val toMinute = generatedTime.plans[0].toMinute
-                        val formattedPlan = DateUtil.getFormattedPlan(
-                            fromHour = fromHour,
-                            fromMinute = fromMinute,
-                            toHour = toHour,
-                            toMinute = toMinute
-                        )
-                        Row (
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(CircleShape)
-                                .background(Color(0xFFF5F5F5))
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            Box(
-                                modifier = Modifier
-                                    .background(Color.DarkGray, shape = CircleShape)
-                                    .layout { measurable, constraints ->
-                                        val placeable = measurable.measure(constraints)
-                                        val minPadding = placeable.height / 4
-                                        val width = maxOf(placeable.width + minPadding, placeable.height)
-                                        layout(width, placeable.height) {
-                                            placeable.place((width - placeable.width) / 2, 0)
-                                        }
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = (index + 1).toString(),
-                                    color = Color.White,
-                                    fontSize = 18.sp
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = "$dayOfWeekName, $day $monthName $year, $formattedPlan"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
             }
         }
     }

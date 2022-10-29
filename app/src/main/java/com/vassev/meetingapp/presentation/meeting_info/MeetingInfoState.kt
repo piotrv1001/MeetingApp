@@ -6,6 +6,5 @@ import com.vassev.meetingapp.domain.responses.GenerateMeetingTimeResponse
 data class MeetingInfoState(
     val isLoadingMeetingInfo: Boolean = false,
     val isLoadingGeneratedTime: Boolean = false,
-    val generatedTimes: List<GenerateMeetingTimeResponse> = emptyList(),
     val meetingDTO: MeetingDTO? = null
 )
