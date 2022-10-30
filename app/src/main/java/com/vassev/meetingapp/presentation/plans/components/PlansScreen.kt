@@ -281,7 +281,7 @@ fun PlansScreen(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
-                                    .background(Color(0xFF90EE90))
+                                    .background(if(plan.name != "") Color(0xFFFFD699) else Color(0xFF90EE90))
                                     .padding(
                                         top = 4.dp,
                                         bottom = 4.dp,
@@ -289,14 +289,20 @@ fun PlansScreen(
                                         end = 16.dp
                                     )
                             ) {
+                                val planText = if(plan.name != "") "${plan.name}, ${DateUtil.getFormattedPlan(
+                                    plan.fromHour,
+                                    plan.fromMinute,
+                                    plan.toHour,
+                                    plan.toMinute
+                                )}" else DateUtil.getFormattedPlan(
+                                    plan.fromHour,
+                                    plan.fromMinute,
+                                    plan.toHour,
+                                    plan.toMinute
+                                )
                                 Text(
-                                    text = DateUtil.getFormattedPlan(
-                                        plan.fromHour,
-                                        plan.fromMinute,
-                                        plan.toHour,
-                                        plan.toMinute
-                                    ),
-                                    color = Color(0xFF06A94D),
+                                    text = planText,
+                                    color = if(plan.name != "") Color(0xFFFF9800) else Color(0xFF06A94D),
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )

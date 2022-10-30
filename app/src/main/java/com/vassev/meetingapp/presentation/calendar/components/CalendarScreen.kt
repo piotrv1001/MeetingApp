@@ -122,10 +122,11 @@ fun CalendarScreen(
                             verticalArrangement = Arrangement.Center
                         ) {
                             if(state.plans.isNotEmpty()) {
+                                val firstPlan = state.plans[0]
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
-                                        .background(Color(0xFF90EE90))
+                                        .background(if(firstPlan.name != "") Color(0xFFFFD699) else Color(0xFF90EE90))
                                         .padding(
                                             top = 4.dp,
                                             bottom = 4.dp,
@@ -133,21 +134,21 @@ fun CalendarScreen(
                                             end = 16.dp
                                         )
                                 ) {
-                                    val firstPlan = state.plans[0]
                                     Text(
                                         text = DateUtil.getFormattedPlan(firstPlan.fromHour, firstPlan.fromMinute, firstPlan.toHour, firstPlan.toMinute),
-                                        color = Color(0xFF06A94D),
+                                        color = if(firstPlan.name != "") Color(0xFFFF9800) else Color(0xFF06A94D),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
                             }
                             if(state.plans.size >= 2) {
+                                val secondPlan = state.plans[1]
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
-                                        .background(Color(0xFF90EE90))
+                                        .background(if(secondPlan.name != "") Color(0xFFFFD699) else Color(0xFF90EE90))
                                         .padding(
                                             top = 4.dp,
                                             bottom = 4.dp,
@@ -155,10 +156,9 @@ fun CalendarScreen(
                                             end = 16.dp
                                         )
                                 ) {
-                                    val secondPlan = state.plans[1]
                                     Text(
                                         text = DateUtil.getFormattedPlan(secondPlan.fromHour, secondPlan.fromMinute, secondPlan.toHour, secondPlan.toMinute),
-                                        color = Color(0xFF06A94D),
+                                        color = if(secondPlan.name != "") Color(0xFFFF9800) else Color(0xFF06A94D),
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold
                                     )

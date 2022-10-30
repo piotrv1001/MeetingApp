@@ -9,5 +9,5 @@ data class OneTimePlanDTO(
     val oneTimePlanId: String,
     val specificDay: SpecificDay,
     val userId: String,
-    val plans: List<Plan> = emptyList()
+    val plans: List<Plan> = emptyList(),
 )

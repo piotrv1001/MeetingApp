@@ -7,7 +7,7 @@ class DateUtil {
     companion object {
 
         fun getMonthName(month: Int): String {
-            return DateFormatSymbols().getMonths()[month - 1]
+            return DateFormatSymbols().months[month - 1]
         }
 
         fun getDayOfWeekName(dayOfWeek: Int): String {

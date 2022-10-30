@@ -5,6 +5,7 @@ data class PlanWithType(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
+    val name: String,
     val repeat: Boolean
 ) {
     fun toPlan(): Plan{
@@ -12,7 +13,7 @@ data class PlanWithType(
             fromHour = fromHour,
             fromMinute = fromMinute,
             toMinute = toMinute,
-            toHour = toHour
+            toHour = toHour,
         )
     }
 }

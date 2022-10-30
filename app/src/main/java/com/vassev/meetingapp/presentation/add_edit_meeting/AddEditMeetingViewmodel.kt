@@ -31,6 +31,8 @@ class AddEditMeetingViewmodel @Inject constructor(
 
     val userId = prefs.getString("userId", "ERROR") ?: ""
 
+    private var meetingDate: String? = null
+
     val filteredUsers = state.map { state ->
         state.memberHashMap.filter { entry ->
             entry.key.userId != userId
@@ -121,7 +123,6 @@ class AddEditMeetingViewmodel @Inject constructor(
                 name = state.value.title,
                 location = state.value.location,
                 duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
-                // change date later
                 date = "",
                 users = selectedUsers.value.keys.map { it.userId }
             )
@@ -145,8 +146,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 name = state.value.title,
                 location = state.value.location,
                 duration = state.value.hours.toInt() * 60 + state.value.minutes.toInt(),
-                // change date later
-                date = "",
+                date = meetingDate ?: "",
                 users = selectedUsers.value.keys.map { it.userId }
             )
             viewModelScope.launch {
@@ -184,6 +184,7 @@ class AddEditMeetingViewmodel @Inject constructor(
                 if (meetingId != "") {
                     currentMeetingId = meetingId
                     meetingRepository.getMeetingById(meetingId)?.also { meetingDTO ->
+                        meetingDate = meetingDTO.date
                         val hours: Int = meetingDTO.duration / 60
                         val minutes: Int = meetingDTO.duration % 60
                         _state.update { currentState ->

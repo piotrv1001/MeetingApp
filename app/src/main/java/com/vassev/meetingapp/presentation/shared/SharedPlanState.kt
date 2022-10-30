@@ -13,6 +13,6 @@ data class SharedPlanState(
     val toMinute: String = "",
     val isRepeatChecked: Boolean = false,
     val showDialog: Boolean = false,
-    val currentPLan: PlanWithType = PlanWithType(0, 0, 0, 0, false),
+    val currentPLan: PlanWithType = PlanWithType(0, 0, 0, 0, "",false),
     val removeEveryWeek: Boolean = false
 )
