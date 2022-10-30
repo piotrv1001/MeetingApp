@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.vassev.meetingapp.domain.model.Plan
 import com.vassev.meetingapp.domain.model.PlanWithType
 import com.vassev.meetingapp.domain.model.SpecificDay
+import com.vassev.meetingapp.domain.repository.MeetingRepository
 import com.vassev.meetingapp.domain.repository.PlanRepository
+import com.vassev.meetingapp.domain.repository.UserRepository
 import com.vassev.meetingapp.domain.requests.AddExceptionToRepeatedPlanRequest
 import com.vassev.meetingapp.domain.requests.OneTimePlanRequest
 import com.vassev.meetingapp.domain.requests.PlanRequest
@@ -26,7 +28,8 @@ import kotlin.collections.ArrayList
 @HiltViewModel
 class SharedPlanViewmodel @Inject constructor(
     private val planRepository: PlanRepository,
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
+    private val meetingRepository: MeetingRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SharedPlanState())
@@ -125,11 +128,93 @@ class SharedPlanViewmodel @Inject constructor(
             is SharedPlanEvent.DeletePlanClicked -> {
                 deleteCurrentPlan()
             }
+            is SharedPlanEvent.LeaveMeetingButtonClicked -> {
+                leaveMeeting()
+            }
         }
     }
 
     private fun reloadUserId() {
         userId = prefs.getString("userId", "ERROR") ?: ""
+    }
+
+    private fun leaveMeeting() {
+        viewModelScope.launch {
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoading = true
+                )
+            }
+           meetingRepository.leaveMeeting(
+                meetingId = state.value.currentPLan.meetingId,
+                userId = userId
+            )
+            val resultTwo = planRepository.deletePlanFromOneTimePlan(
+                OneTimePlanRequest(
+                    specificDay = state.value.specificDay,
+                    userId = userId,
+                    plans = listOf(
+                        Plan(
+                            fromHour = state.value.currentPLan.fromHour,
+                            fromMinute = state.value.currentPLan.fromMinute,
+                            toHour = state.value.currentPLan.toHour,
+                            toMinute = state.value.currentPLan.toMinute,
+                            name = state.value.currentPLan.name,
+                            meetingId = state.value.currentPLan.meetingId
+                        )
+                    )
+                )
+            )
+            resultChannel.send(resultTwo)
+            _state.update { currentState ->
+                currentState.copy(
+                    showDialog = false
+                )
+            }
+            if(dayHashMap.containsKey(state.value.specificDay)) {
+                dayHashMap.remove(state.value.specificDay)
+            }
+            if(dayHashMap.contains(state.value.specificDay)) {
+                _state.update { currentState ->
+                    currentState.copy(
+                        plans = dayHashMap[state.value.specificDay] ?: emptyList(),
+                    )
+                }
+            } else {
+                val response: PlanResponse? = planRepository.getPlansForUserOnDay(
+                    PlanRequest(
+                        specificDay = state.value.specificDay,
+                        userId = userId,
+                        dayOfWeek = dayOfWeek
+                    )
+                )
+                if(response == null) {
+                    resultChannel.send(Resource.Error("Error! Could not load plans"))
+                    _state.update { currentState ->
+                        currentState.copy(
+                            isLoading = false,
+                        )
+                    }
+                } else {
+                    val oneTimePlanList = response.oneTimePlan?.plans
+                    val repeatedPlanList = response.repeatedPlan?.plans
+                    val resultList: MutableList<PlanWithType> = ArrayList()
+                    if(oneTimePlanList != null) {
+                        resultList.addAll(oneTimePlanList.map { it.toPlanWithType(false) })
+                    }
+                    if(repeatedPlanList != null) {
+                        resultList.addAll(repeatedPlanList.map { it.toPlanWithType(true) })
+                    }
+                    _state.update { currentState ->
+                        currentState.copy(
+                            plans = resultList,
+                            isLoading = false,
+                        )
+                    }
+                    dayHashMap[state.value.specificDay] = resultList
+                }
+            }
+        }
     }
 
     private fun loadPlansForSpecificDay(specificDay: SpecificDay) {

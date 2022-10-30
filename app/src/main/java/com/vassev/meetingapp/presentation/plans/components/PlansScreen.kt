@@ -77,7 +77,8 @@ fun PlansScreen(
                 state = state,
                 deleteOnceClick = { viewModel.onEvent(SharedPlanEvent.RemoveOnceRadioButtonClicked) },
                 deleteAllClick = { viewModel.onEvent(SharedPlanEvent.RemoveALlRadioButtonClicked) },
-                deleteConfirmClick = { viewModel.onEvent(SharedPlanEvent.DeletePlanClicked) }
+                deleteConfirmClick = { viewModel.onEvent(SharedPlanEvent.DeletePlanClicked) },
+                leaveMeetingClick = { viewModel.onEvent(SharedPlanEvent.LeaveMeetingButtonClicked) }
             )
         }
     }

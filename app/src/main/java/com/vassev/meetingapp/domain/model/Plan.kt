@@ -8,7 +8,8 @@ data class Plan(
     val toHour: Int,
     val fromMinute: Int,
     val toMinute: Int,
-    val name: String = ""
+    val name: String = "",
+    val meetingId: String = ""
 ) {
     fun toPlanWithType(repeat: Boolean): PlanWithType {
         return PlanWithType(
@@ -17,6 +18,7 @@ data class Plan(
             toHour = toHour,
             toMinute = toMinute,
             name = name,
+            meetingId = meetingId,
             repeat = repeat
         )
     }

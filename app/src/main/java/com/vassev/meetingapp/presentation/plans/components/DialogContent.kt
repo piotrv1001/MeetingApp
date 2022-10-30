@@ -21,7 +21,8 @@ fun DialogContent(
     state: SharedPlanState,
     deleteOnceClick: () -> Unit,
     deleteAllClick: () -> Unit,
-    deleteConfirmClick: () -> Unit
+    deleteConfirmClick: () -> Unit,
+    leaveMeetingClick: () -> Unit
 ) {
 
     Card(
@@ -38,7 +39,7 @@ fun DialogContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Are you sure?",
+                    text = if(plan.name == "") "Delete plan?" else "Leave meeting?",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -79,7 +80,8 @@ fun DialogContent(
                 }
             } else {
                 Text(
-                    text = "The selected plan will be permanently removed"
+                    text = if(plan.name == "") "The selected plan will be permanently removed" else
+                        "This will permanently remove the meeting from your meetings list"
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -103,7 +105,7 @@ fun DialogContent(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = deleteConfirmClick,
+                    onClick = if(plan.name == "") deleteConfirmClick else leaveMeetingClick,
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.White
                     ),
@@ -112,7 +114,7 @@ fun DialogContent(
                     )
                 ) {
                     Text(
-                        text = "Delete",
+                        text = if(plan.name == "") "Delete" else "Leave",
                         color = Color.Red
                     )
                 }

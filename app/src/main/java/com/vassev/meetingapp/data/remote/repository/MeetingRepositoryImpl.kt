@@ -88,4 +88,32 @@ class MeetingRepositoryImpl(
             Resource.Error(e.localizedMessage ?: "Error")
         }
     }
+
+    override suspend fun leaveMeeting(meetingId: String, userId: String): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.put("http://${MeetingRepository.Endpoints.LeaveMeeting.url}/$meetingId/$userId")
+            if(response.status == HttpStatusCode.OK) {
+                Resource.Success()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
+        }
+    }
+
+    override suspend fun deleteMeeting(meetingId: String): Resource<Unit> {
+        return try {
+            val response: HttpResponse = client.delete("http://${MeetingRepository.Endpoints.Meeting}/$meetingId")
+            if(response.status == HttpStatusCode.OK) {
+                Resource.Success()
+            } else {
+                Resource.Error("Http Error")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.localizedMessage ?: "Error")
+        }
+    }
 }

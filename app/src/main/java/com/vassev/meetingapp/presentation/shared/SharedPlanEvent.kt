@@ -12,6 +12,7 @@ sealed class SharedPlanEvent {
     data class ToMinuteChanged(val newToMinute: String): SharedPlanEvent()
     data class RepeatCheckChanged(val newRepeatCheck: Boolean): SharedPlanEvent()
     data class  RemovePlanButtonClicked(val plan: PlanWithType): SharedPlanEvent()
+    object LeaveMeetingButtonClicked: SharedPlanEvent()
     object AddPlanButtonClicked: SharedPlanEvent()
     object CloseDialogClicked: SharedPlanEvent()
     object RemoveOnceRadioButtonClicked: SharedPlanEvent()

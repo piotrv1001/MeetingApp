@@ -20,9 +20,14 @@ interface MeetingRepository {
 
     suspend fun saveMeetingTime(saveMeetingTimeRequest: SaveMeetingTimeRequest): Resource<Unit>
 
+    suspend fun leaveMeeting(meetingId: String, userId: String): Resource<Unit>
+
+    suspend fun deleteMeeting(meetingId: String): Resource<Unit>
+
     sealed class Endpoints(val url: String) {
         object Meeting: Endpoints("${Constants.BASE_URL}/meeting")
         object UpdateMeeting: Endpoints("${Constants.BASE_URL}/meeting/update")
         object SaveMeetingTime: Endpoints("${Constants.BASE_URL}/meeting/saveTime")
+        object LeaveMeeting: Endpoints("${Constants.BASE_URL}/meeting/leave")
     }
 }

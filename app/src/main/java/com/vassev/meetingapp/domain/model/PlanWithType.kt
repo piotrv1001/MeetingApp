@@ -6,6 +6,7 @@ data class PlanWithType(
     val fromMinute: Int,
     val toMinute: Int,
     val name: String,
+    val meetingId: String,
     val repeat: Boolean
 ) {
     fun toPlan(): Plan{
