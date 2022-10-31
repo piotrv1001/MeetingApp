@@ -7,5 +7,5 @@ object Constants {
     private const val serverIP = "153.92.1.228"
     private const val PORT = "8080"
 
-    const val BASE_URL = "$localIP:$PORT"
+    const val BASE_URL = "$emulatorIP:$PORT"
 }

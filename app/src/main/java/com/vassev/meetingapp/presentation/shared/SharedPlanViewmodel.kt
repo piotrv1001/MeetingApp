@@ -273,8 +273,25 @@ class SharedPlanViewmodel @Inject constructor(
         }
     }
 
+    private fun validateInput(): Boolean {
+        return state.value.fromHour.isNotEmpty()
+                && state.value.fromMinute.isNotEmpty()
+                && state.value.toHour.isNotEmpty()
+                && state.value.toMinute.isNotEmpty()
+                && state.value.fromHour.toInt() in 0..24
+                && state.value.fromMinute.toInt() in 0..24
+                && state.value.toHour.toInt() in 0..24
+                && state.value.toMinute.toInt() in 0..24
+                && state.value.fromHour <= state.value.toHour
+                && state.value.fromMinute < state.value.toMinute
+    }
+
     private fun addPlan() {
         viewModelScope.launch {
+            if(!validateInput()) {
+                resultChannel.send(Resource.Error("Make sure the numbers are correct"))
+                return@launch
+            }
             if(state.value.isRepeatChecked) {
                 val response = planRepository.insertRepeatedPlan(
                     RepeatedPlanRequest(
