@@ -14,13 +14,19 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.vassev.meetingapp.presentation.navigation.BottomNavigationBar
 import com.vassev.meetingapp.presentation.navigation.Navigation
 import com.vassev.meetingapp.presentation.navigation.NavigationItem
@@ -32,8 +38,14 @@ class MainActivity : ComponentActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setContent {
+            val systemUiController = rememberSystemUiController()
+            SideEffect {
+                systemUiController.setStatusBarColor(
+                    color = Color.Black,
+                    darkIcons = false
+                )
+            }
             val navController = rememberNavController()
             var showBottomBar by rememberSaveable { mutableStateOf(true) }
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -80,5 +92,10 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
+//            val bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+//            view.updatePadding(bottom = bottom)
+//            insets
+//        }
     }
 }
