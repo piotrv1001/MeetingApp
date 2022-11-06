@@ -274,16 +274,31 @@ class SharedPlanViewmodel @Inject constructor(
     }
 
     private fun validateInput(): Boolean {
-        return state.value.fromHour.isNotEmpty()
-                && state.value.fromMinute.isNotEmpty()
-                && state.value.toHour.isNotEmpty()
-                && state.value.toMinute.isNotEmpty()
-                && state.value.fromHour.toInt() in 0..24
-                && state.value.fromMinute.toInt() in 0..24
-                && state.value.toHour.toInt() in 0..24
-                && state.value.toMinute.toInt() in 0..24
-                && state.value.fromHour <= state.value.toHour
-                && state.value.fromMinute < state.value.toMinute
+        return if(state.value.fromHour.isNotEmpty()
+            && state.value.fromMinute.isNotEmpty()
+            && state.value.toHour.isNotEmpty()
+            && state.value.toMinute.isNotEmpty()
+            && state.value.fromHour.toInt() in 0..23
+            && state.value.fromMinute.toInt() in 0..59
+            && state.value.toHour.toInt() in 0..23
+            && state.value.toMinute.toInt() in 0..59
+            && state.value.fromHour.toInt() < state.value.toHour.toInt()) {
+            true
+        } else if(state.value.fromHour == state.value.toHour) {
+            state.value.fromMinute.toInt() < state.value.toMinute.toInt()
+        } else {
+            false
+        }
+    }
+
+    private fun checkIfPlanAlreadyExists(): Boolean {
+        val newPlan = Plan(
+            fromHour = state.value.fromHour.toInt(),
+            fromMinute = state.value.fromMinute.toInt(),
+            toHour = state.value.toHour.toInt(),
+            toMinute = state.value.toMinute.toInt()
+        )
+        return (state.value.plans.find{ newPlan.isWithinAnotherPlan(it.toPlan()) }) != null
     }
 
     private fun addPlan() {
@@ -291,6 +306,14 @@ class SharedPlanViewmodel @Inject constructor(
             if(!validateInput()) {
                 resultChannel.send(Resource.Error("Make sure the numbers are correct"))
                 return@launch
+            } else if(checkIfPlanAlreadyExists()) {
+                resultChannel.send(Resource.Error("Plan unnecessary"))
+                return@launch
+            }
+            _state.update { currentState ->
+                currentState.copy(
+                    isLoading = true,
+                )
             }
             if(state.value.isRepeatChecked) {
                 val response = planRepository.insertRepeatedPlan(
@@ -334,11 +357,6 @@ class SharedPlanViewmodel @Inject constructor(
                     )
                 }
             } else {
-                _state.update { currentState ->
-                    currentState.copy(
-                        isLoading = true,
-                    )
-                }
                 val response: PlanResponse? = planRepository.getPlansForUserOnDay(
                     PlanRequest(
                         specificDay = state.value.specificDay,

@@ -2,6 +2,7 @@ package com.vassev.meetingapp.presentation.add_edit_meeting.components
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -220,7 +221,7 @@ fun AddEditMeetingScreen(
                     }
                     Divider(
                         modifier = Modifier
-                            .fillMaxWidth(0.8f)
+                            .fillMaxWidth()
                             .align(Alignment.CenterHorizontally),
                         thickness = 1.dp,
                         color = Color.Gray
@@ -228,20 +229,37 @@ fun AddEditMeetingScreen(
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f),
-                onClick = { viewModel.onEvent(AddEditMeetingEvent.SaveButtonClicked) },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Blue,
-                    contentColor = Color.White
-                ),
-                elevation = ButtonDefaults.elevation(
-                    defaultElevation = 18.dp
-                ),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Save")
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { navController.navigateUp() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = Color.Black,
+                    )
+                }
+                Button(
+                    modifier = Modifier
+                        .weight(1f),
+                    onClick = { viewModel.onEvent(AddEditMeetingEvent.SaveButtonClicked) },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Blue,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.elevation(
+                        defaultElevation = 18.dp
+                    ),
+                ) {
+                    Text(text = "Save")
+                }
             }
         }
     } else {

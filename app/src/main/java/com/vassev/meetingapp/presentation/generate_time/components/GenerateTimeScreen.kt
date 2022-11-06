@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -283,6 +284,7 @@ fun GenerateTimeScreen(
                         )
                     }?.let { viewModel.onEvent(it) }
                 },
+                enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .align(CenterHorizontally)
@@ -303,7 +305,7 @@ fun GenerateTimeScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .align(CenterHorizontally),
-                enabled = state.chosenTime != null
+                enabled = state.chosenTime != null && !state.isLoading
             ) {
                 Text(
                     text = "Save meeting time"
@@ -318,70 +320,84 @@ fun GenerateTimeScreen(
                     CircularProgressIndicator()
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    itemsIndexed(
-                        items = state.generatedTimes
-                    ) { index, generatedTime ->
-                        val dayOfWeek = LocalDate.of(generatedTime.specificDay.year, generatedTime.specificDay.month, generatedTime.specificDay.day).dayOfWeek.value
-                        val dayOfWeekName = DateUtil.getDayOfWeekName(dayOfWeek)
-                        val day = generatedTime.specificDay.day
-                        val month = generatedTime.specificDay.month
-                        val year = generatedTime.specificDay.year
-                        val monthName = DateUtil.getMonthName(month)
-                        val fromHour = generatedTime.plan.fromHour
-                        val fromMinute = generatedTime.plan.fromMinute
-                        val toHour = generatedTime.plan.toHour
-                        val toMinute = generatedTime.plan.toMinute
-                        val formattedPlan = DateUtil.getFormattedPlan(
-                            fromHour = fromHour,
-                            fromMinute = fromMinute,
-                            toHour = toHour,
-                            toMinute = toMinute
+                if(state.isAlreadyGenerated && state.generatedTimes.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Center
+                    ) {
+                        Text(
+                            text = "No results found",
+                            color = Color(0xFF8B0000),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                        Row (
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(CircleShape)
-                                .background(if(state.chosenTime == generatedTime) Color.DarkGray else Color(0xFFF5F5F5))
-                                .padding(8.dp)
-                                .clickable {
-                                    viewModel.onEvent(
-                                        GenerateTimeEvent.ChooseMeetingTime(
-                                            generatedTime
-                                        )
-                                    )
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            Box(
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        itemsIndexed(
+                            items = state.generatedTimes
+                        ) { index, generatedTime ->
+                            val dayOfWeek = LocalDate.of(generatedTime.specificDay.year, generatedTime.specificDay.month, generatedTime.specificDay.day).dayOfWeek.value
+                            val dayOfWeekName = DateUtil.getDayOfWeekName(dayOfWeek)
+                            val day = generatedTime.specificDay.day
+                            val month = generatedTime.specificDay.month
+                            val year = generatedTime.specificDay.year
+                            val monthName = DateUtil.getMonthName(month)
+                            val fromHour = generatedTime.plan.fromHour
+                            val fromMinute = generatedTime.plan.fromMinute
+                            val toHour = generatedTime.plan.toHour
+                            val toMinute = generatedTime.plan.toMinute
+                            val formattedPlan = DateUtil.getFormattedPlan(
+                                fromHour = fromHour,
+                                fromMinute = fromMinute,
+                                toHour = toHour,
+                                toMinute = toMinute
+                            )
+                            Row (
                                 modifier = Modifier
-                                    .background(Color.DarkGray, shape = CircleShape)
-                                    .layout { measurable, constraints ->
-                                        val placeable = measurable.measure(constraints)
-                                        val minPadding = placeable.height / 4
-                                        val width =
-                                            maxOf(placeable.width + minPadding, placeable.height)
-                                        layout(width, placeable.height) {
-                                            placeable.place((width - placeable.width) / 2, 0)
-                                        }
+                                    .fillMaxWidth()
+                                    .clip(CircleShape)
+                                    .background(if(state.chosenTime == generatedTime) Color.DarkGray else Color(0xFFF5F5F5))
+                                    .padding(8.dp)
+                                    .clickable {
+                                        viewModel.onEvent(
+                                            GenerateTimeEvent.ChooseMeetingTime(
+                                                generatedTime
+                                            )
+                                        )
                                     },
-                                contentAlignment = Center
-                            ) {
+                                verticalAlignment = Alignment.CenterVertically
+                            ){
+                                Box(
+                                    modifier = Modifier
+                                        .background(Color.DarkGray, shape = CircleShape)
+                                        .layout { measurable, constraints ->
+                                            val placeable = measurable.measure(constraints)
+                                            val minPadding = placeable.height / 4
+                                            val width =
+                                                maxOf(placeable.width + minPadding, placeable.height)
+                                            layout(width, placeable.height) {
+                                                placeable.place((width - placeable.width) / 2, 0)
+                                            }
+                                        },
+                                    contentAlignment = Center
+                                ) {
+                                    Text(
+                                        text = (index + 1).toString(),
+                                        color = Color.White,
+                                        fontSize = 18.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = (index + 1).toString(),
-                                    color = Color.White,
-                                    fontSize = 18.sp
+                                    text = "$dayOfWeekName, $day $monthName $year, $formattedPlan",
+                                    color = if(state.chosenTime == generatedTime) Color.White else Color.Black
                                 )
                             }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = "$dayOfWeekName, $day $monthName $year, $formattedPlan",
-                                color = if(state.chosenTime == generatedTime) Color.White else Color.Black
-                            )
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }

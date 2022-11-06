@@ -237,6 +237,7 @@ fun PlansScreen(
                     modifier = Modifier
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                     onClick = { viewModel.onEvent(SharedPlanEvent.AddPlanButtonClicked) },
+                    enabled = !state.isLoading,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Blue,

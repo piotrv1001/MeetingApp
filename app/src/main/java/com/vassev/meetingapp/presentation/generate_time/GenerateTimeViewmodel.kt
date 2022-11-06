@@ -99,7 +99,8 @@ class GenerateTimeViewmodel @Inject constructor(
         viewModelScope.launch {
             _state.update { currentState ->
                 currentState.copy(
-                    isLoading = true
+                    isLoading = true,
+                    isAlreadyGenerated = true
                 )
             }
             val generatedTimes = generateMeetingTimeService.generateMeetingTime(

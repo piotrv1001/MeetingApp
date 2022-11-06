@@ -126,6 +126,11 @@ class ChatViewmodel @Inject constructor(
         viewModelScope.launch {
             if(state.value.messageText.isNotBlank()) {
                 webSocketService.sendMessage(state.value.messageText)
+                _state.update { currentState ->
+                    currentState.copy(
+                        messageText = ""
+                    )
+                }
             }
         }
     }

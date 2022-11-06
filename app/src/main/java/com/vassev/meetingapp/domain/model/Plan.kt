@@ -22,4 +22,22 @@ data class Plan(
             repeat = repeat
         )
     }
+
+    fun startTime(): HalfPlan {
+        return HalfPlan(
+            hour = this.fromHour,
+            minute = this.fromMinute
+        )
+    }
+
+    fun endTime(): HalfPlan {
+        return HalfPlan(
+            hour = this.toHour,
+            minute = this.toMinute
+        )
+    }
+
+    fun isWithinAnotherPlan(anotherPlan: Plan): Boolean {
+        return this.startTime() >= anotherPlan.startTime() && this.endTime() <= anotherPlan.endTime()
+    }
 }
