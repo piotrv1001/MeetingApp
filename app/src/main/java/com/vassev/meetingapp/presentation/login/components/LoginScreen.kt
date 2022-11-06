@@ -52,7 +52,8 @@ fun LoginScreen(
             }
             is Resource.Error -> {
                scaffoldState.snackbarHostState.showSnackbar(
-                  message = "Error: ${result.message}"
+                  message = "Error: ${result.message}",
+                  duration = SnackbarDuration.Short
                )
             }
             else -> {}

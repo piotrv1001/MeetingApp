@@ -9,5 +9,6 @@ data class GenerateTimeState(
     val chosenTime: GenerateMeetingTimeResponse? = null,
     val numberOfWeeks: Int = 1,
     val numberOfResults: Int = 0,
-    val preferredTime: Int = 0
+    val preferredTime: Int = 0,
+    val showAllResults: Boolean = true
 )

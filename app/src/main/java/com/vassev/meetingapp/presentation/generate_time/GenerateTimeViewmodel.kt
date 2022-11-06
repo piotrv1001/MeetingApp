@@ -64,25 +64,17 @@ class GenerateTimeViewmodel @Inject constructor(
                     )
                 }
             }
-            is GenerateTimeEvent.ChooseMorning -> {
+            is GenerateTimeEvent.ChooseTimeOfDay -> {
                 _state.update { currentState ->
-                    currentState.copy(
-                        preferredTime = 1
-                    )
-                }
-            }
-            is GenerateTimeEvent.ChooseAfternoon -> {
-                _state.update { currentState ->
-                    currentState.copy(
-                        preferredTime = 2
-                    )
-                }
-            }
-            is GenerateTimeEvent.ChooseEvening -> {
-                _state.update { currentState ->
-                    currentState.copy(
-                        preferredTime = 3
-                    )
+                    if(currentState.preferredTime == event.timeOfDay) {
+                        currentState.copy(
+                            preferredTime = 0
+                        )
+                    } else {
+                        currentState.copy(
+                            preferredTime = event.timeOfDay
+                        )
+                    }
                 }
             }
             is GenerateTimeEvent.ChooseMeetingTime -> {
@@ -90,6 +82,21 @@ class GenerateTimeViewmodel @Inject constructor(
                     currentState.copy(
                         chosenTime = event.chosenTime
                     )
+                }
+            }
+            is GenerateTimeEvent.ShowAllResultsCheckboxClicked -> {
+                _state.update { currentState ->
+                    if(event.checked) {
+                        currentState.copy(
+                            showAllResults = event.checked,
+                            numberOfResults = 0
+                        )
+                    } else {
+                        currentState.copy(
+                            showAllResults = event.checked,
+                            numberOfResults = 1
+                        )
+                    }
                 }
             }
         }

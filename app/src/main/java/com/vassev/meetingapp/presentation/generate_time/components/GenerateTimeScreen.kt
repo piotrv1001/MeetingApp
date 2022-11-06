@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.vassev.meetingapp.domain.util.DateUtil
 import com.vassev.meetingapp.domain.util.Resource
+import com.vassev.meetingapp.presentation.add_edit_meeting.AddEditMeetingEvent
 import com.vassev.meetingapp.presentation.generate_time.GenerateTimeEvent
 import com.vassev.meetingapp.presentation.generate_time.GenerateTimeViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
@@ -58,7 +59,8 @@ fun GenerateTimeScreen(
                 }
                 is Resource.Error -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = "Error: ${result.message}"
+                        message = "Error: ${result.message}",
+                        duration = SnackbarDuration.Short
                     )
                 }
                 else -> {}
@@ -75,6 +77,24 @@ fun GenerateTimeScreen(
                 .background(Color.White)
                 .padding(16.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { navController.navigateUp() },
+                    modifier = Modifier
+                        .size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Go back",
+                        tint = Color.Blue
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -95,6 +115,7 @@ fun GenerateTimeScreen(
                     ) {
                         Button(
                             onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementWeeks)},
+                            enabled = state.numberOfWeeks > 1,
                             modifier = Modifier
                                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                             shape = RoundedCornerShape(10.dp),
@@ -121,6 +142,7 @@ fun GenerateTimeScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
                             onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementWeeks)},
+                            enabled = state.numberOfWeeks < 9,
                             modifier = Modifier
                                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                             shape = RoundedCornerShape(10.dp),
@@ -143,19 +165,38 @@ fun GenerateTimeScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "How many results?"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "How many results?"
-                    )
+                    Row {
+                        Checkbox(
+                            checked = state.showAllResults,
+                            onCheckedChange = { checked ->
+                                viewModel.onEvent(GenerateTimeEvent.ShowAllResultsCheckboxClicked(checked))
+                            },
+                            colors = CheckboxDefaults.colors(
+                                uncheckedColor = Color.Gray,
+                                checkedColor = Color.Gray,
+                                checkmarkColor = Color.White
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "All possible results",
+                        )
+                    }
                     Row (
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Button(
                             onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementResults)},
+                            enabled = !state.showAllResults && state.numberOfResults > 1,
                             modifier = Modifier
                                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                             shape = RoundedCornerShape(10.dp),
@@ -182,6 +223,7 @@ fun GenerateTimeScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
                             onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementResults)},
+                            enabled = !state.showAllResults && state.numberOfResults < 9,
                             modifier = Modifier
                                 .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                             shape = RoundedCornerShape(10.dp),
@@ -204,20 +246,24 @@ fun GenerateTimeScreen(
                     }
                 }
                 Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    text = "What time of day?"
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseMorning) }
+                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(1)) }
                             .clip(RoundedCornerShape(6.dp))
                             .background(if (state.preferredTime == 1) Color.Black else Color(0xfff5f5f5))
                             .padding(
                                 horizontal = 8.dp,
                                 vertical = 12.dp,
                             ),
-                        horizontalArrangement = Arrangement.SpaceAround
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Icon(
                             imageVector = Icons.Default.WbSunny,
@@ -232,7 +278,7 @@ fun GenerateTimeScreen(
                     Row(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseAfternoon) }
+                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(2)) }
                             .clip(RoundedCornerShape(6.dp))
                             .background(if (state.preferredTime == 2) Color.Black else Color(0xfff5f5f5))
                             .padding(
@@ -254,7 +300,7 @@ fun GenerateTimeScreen(
                     Row(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseEvening) }
+                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(3)) }
                             .clip(RoundedCornerShape(6.dp))
                             .background(if (state.preferredTime == 3) Color.Black else Color(0xfff5f5f5))
                             .padding(

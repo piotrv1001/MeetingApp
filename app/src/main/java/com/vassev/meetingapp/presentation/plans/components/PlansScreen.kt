@@ -48,17 +48,20 @@ fun PlansScreen(
             when (result) {
                 is Resource.Error -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = "Error: ${result.message}"
+                        message = "Error: ${result.message}",
+                        duration = SnackbarDuration.Short
                     )
                 }
                 is Resource.Success -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = "Successfully added plan!"
+                        message = "Successfully added plan!",
+                        duration = SnackbarDuration.Short
                     )
                 }
                 is Resource.SuccessDelete -> {
                     scaffoldState.snackbarHostState.showSnackbar(
-                        message = "Successfully deleted plan!"
+                        message = "Successfully deleted plan!",
+                        duration = SnackbarDuration.Short
                     )
                 }
                 else -> {

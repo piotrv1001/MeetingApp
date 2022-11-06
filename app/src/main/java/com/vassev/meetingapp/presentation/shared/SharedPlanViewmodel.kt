@@ -291,23 +291,30 @@ class SharedPlanViewmodel @Inject constructor(
         }
     }
 
-    private fun checkIfPlanAlreadyExists(): Boolean {
-        val newPlan = Plan(
-            fromHour = state.value.fromHour.toInt(),
-            fromMinute = state.value.fromMinute.toInt(),
-            toHour = state.value.toHour.toInt(),
-            toMinute = state.value.toMinute.toInt()
-        )
+    private fun checkIfPlanIsWithinOtherPlans(newPlan: Plan): Boolean {
         return (state.value.plans.find{ newPlan.isWithinAnotherPlan(it.toPlan()) }) != null
+    }
+
+    private fun checkIfPlanFullyContainsOtherPlans(newPlan: Plan): Boolean {
+        return (state.value.plans.find{ newPlan.fullyContainsAnotherPLan(it.toPlan()) }) != null
     }
 
     private fun addPlan() {
         viewModelScope.launch {
+            val newPlan = Plan(
+                fromHour = state.value.fromHour.toInt(),
+                fromMinute = state.value.fromMinute.toInt(),
+                toHour = state.value.toHour.toInt(),
+                toMinute = state.value.toMinute.toInt()
+            )
             if(!validateInput()) {
                 resultChannel.send(Resource.Error("Make sure the numbers are correct"))
                 return@launch
-            } else if(checkIfPlanAlreadyExists()) {
+            } else if(checkIfPlanIsWithinOtherPlans(newPlan)) {
                 resultChannel.send(Resource.Error("Plan unnecessary"))
+                return@launch
+            } else if(checkIfPlanFullyContainsOtherPlans(newPlan)) {
+                resultChannel.send(Resource.Error("Plan cannot contain other plans"))
                 return@launch
             }
             _state.update { currentState ->

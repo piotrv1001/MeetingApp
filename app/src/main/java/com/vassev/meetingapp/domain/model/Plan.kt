@@ -38,6 +38,10 @@ data class Plan(
     }
 
     fun isWithinAnotherPlan(anotherPlan: Plan): Boolean {
-        return this.startTime() >= anotherPlan.startTime() && this.endTime() <= anotherPlan.endTime()
+        return this.startTime() >= anotherPlan.startTime() || this.endTime() <= anotherPlan.endTime()
+    }
+
+    fun fullyContainsAnotherPLan(anotherPlan: Plan): Boolean {
+        return this.startTime() <= anotherPlan.startTime() && this.endTime() >= anotherPlan.endTime()
     }
 }
