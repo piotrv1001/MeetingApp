@@ -17,6 +17,7 @@ import com.vassev.meetingapp.presentation.login.components.LoginScreen
 import com.vassev.meetingapp.presentation.meeting_info.components.MeetingInfoScreen
 import com.vassev.meetingapp.presentation.plans.components.PlansScreen
 import com.vassev.meetingapp.presentation.register.components.RegisterScreen
+import com.vassev.meetingapp.presentation.settings.SettingsViewmodel
 import com.vassev.meetingapp.presentation.settings.components.SettingsScreen
 import com.vassev.meetingapp.presentation.shared.SharedPlanViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
@@ -25,6 +26,7 @@ import com.vassev.meetingapp.presentation.util.Screen
 fun Navigation(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    settingsViewmodel: SettingsViewmodel
 ) {
     NavHost(navController = navController, startDestination = Screen.RegisterScreen.route, modifier = modifier, route = "Parent") {
         composable(route = Screen.RegisterScreen.route) {
@@ -95,7 +97,7 @@ fun Navigation(
             )
         }
         composable(route = Screen.SettingsScreen.route) {
-            SettingsScreen(navController = navController)
+            SettingsScreen(viewModel = settingsViewmodel, navController = navController)
         }
         composable(
             route = Screen.GenerateTimeScreen.route + "/{meetingId}",

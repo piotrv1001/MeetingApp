@@ -5,6 +5,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.vassev.meetingapp.presentation.settings.SettingsViewmodel
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -28,8 +32,13 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun MeetingAppTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
+fun MeetingAppTheme(
+    viewModel: SettingsViewmodel,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit) {
+
+    val state by viewModel.state.collectAsState()
+    val colors = if (state.isDarkThemeEnabled) {
         DarkColorPalette
     } else {
         LightColorPalette

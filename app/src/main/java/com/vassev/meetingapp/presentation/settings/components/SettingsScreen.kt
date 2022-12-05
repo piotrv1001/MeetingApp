@@ -1,14 +1,14 @@
 package com.vassev.meetingapp.presentation.settings.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.OfflineBolt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,9 +21,10 @@ import com.vassev.meetingapp.presentation.util.Screen
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsViewmodel = hiltViewModel(),
+    viewModel: SettingsViewmodel,
     navController: NavController
 ) {
+    val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(viewModel, context) {
         viewModel.settingsResults.collect { result ->
@@ -43,9 +44,17 @@ fun SettingsScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Settings screen"
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Dark theme")
+            Switch(
+                checked = state.isDarkThemeEnabled,
+                onCheckedChange = { viewModel.onEvent(SettingsEvent.DarkThemeSwitchPressed(checked = it)) }
+            )
+        }
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = { viewModel.onEvent(SettingsEvent.LogOutButtonClicked) },
@@ -57,7 +66,7 @@ fun SettingsScreen(
             )
         ) {
             Icon(
-                Icons.Filled.Logout,
+                Icons.Filled.OfflineBolt,
                 contentDescription = "Log out",
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
