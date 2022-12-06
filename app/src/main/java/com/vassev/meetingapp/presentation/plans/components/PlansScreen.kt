@@ -106,7 +106,7 @@ fun PlansScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Go back",
-                        tint = Color.Blue
+                        tint = MaterialTheme.colors.primary
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -242,10 +242,6 @@ fun PlansScreen(
                     onClick = { viewModel.onEvent(SharedPlanEvent.AddPlanButtonClicked) },
                     enabled = !state.isLoading,
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 18.dp
                     ),

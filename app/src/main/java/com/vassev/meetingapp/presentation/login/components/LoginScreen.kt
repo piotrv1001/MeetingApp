@@ -63,8 +63,7 @@ fun LoginScreen(
    if (state.isLoading) {
       Box(
          modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+            .fillMaxSize(),
          contentAlignment = Alignment.Center
       ) {
          CircularProgressIndicator()
@@ -82,14 +81,7 @@ fun LoginScreen(
                modifier = Modifier
                   .fillMaxWidth()
                   .fillMaxHeight(0.3f)
-                  .background(
-                     brush = Brush.horizontalGradient(
-                        colors = listOf(
-                           Color(0xFF36d1dc),
-                           Color(0xFF5b86e5)
-                        )
-                     )
-                  )
+                  .background(color = MaterialTheme.colors.primary)
                   .padding(32.dp),
                contentAlignment = Alignment.Center
             ) {
@@ -97,13 +89,13 @@ fun LoginScreen(
                   text = "Login",
                   fontSize = 42.sp,
                   fontWeight = FontWeight.Bold,
-                  color = Color.White
+                  color = MaterialTheme.colors.onPrimary
                )
             }
+            val bgColor = MaterialTheme.colors.background
             Column(
                modifier = Modifier
                   .fillMaxSize()
-                  .background(Color.White)
                   .drawBehind {
                      val cornerRadius = CornerRadius(50.dp.toPx(), 50.dp.toPx())
                      val path = Path().apply {
@@ -118,7 +110,7 @@ fun LoginScreen(
                            )
                         )
                      }
-                     drawPath(path, color = Color.White)
+                     drawPath(path, color = bgColor)
                   }
                   .padding(32.dp),
                horizontalAlignment = Alignment.CenterHorizontally,
@@ -168,20 +160,14 @@ fun LoginScreen(
                   )
                }
                Column {
-                  GradientButton(
-                     text = "Login",
-                     gradient = Brush.horizontalGradient(
-                        colors = listOf(
-                           Color(0xFF36d1dc),
-                           Color(0xFF5b86e5)
-                        )
-                     ),
-                     textColor = Color.White,
+                  Button(
                      modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(8.dp),
                      onClick = { viewModel.onEvent(LoginEvent.LoginButtonClicked) }
-                  )
+                  ) {
+                     Text("Login")
+                  }
                   Spacer(modifier = Modifier.height(16.dp))
                   Row(
                      modifier = Modifier.fillMaxWidth(),
@@ -199,7 +185,7 @@ fun LoginScreen(
                      ) {
                         Text(
                            text = "or",
-                           color = Color.DarkGray,
+                           color = Color.Gray,
                         )
                      }
                      Divider(

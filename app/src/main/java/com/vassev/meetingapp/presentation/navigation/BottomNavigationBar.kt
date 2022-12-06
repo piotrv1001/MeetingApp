@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.vassev.meetingapp.ui.theme.LimeGreen900
 
 @ExperimentalMaterialApi
 @Composable
@@ -31,8 +32,8 @@ fun BottomNavigationBar(
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
-                selectedContentColor = Color.White,
-                unselectedContentColor = Color.Gray,
+                selectedContentColor = MaterialTheme.colors.primaryVariant,
+                unselectedContentColor = Color.White,
                 icon = {
                     Column(
                         horizontalAlignment = CenterHorizontally

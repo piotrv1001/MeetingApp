@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -27,6 +28,8 @@ import androidx.navigation.NavController
 import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.chat.ChatEvent
 import com.vassev.meetingapp.presentation.chat.ChatViewmodel
+import com.vassev.meetingapp.ui.theme.LimeGreen600
+import com.vassev.meetingapp.ui.theme.LimeGreen900
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -36,7 +39,6 @@ fun ChatScreen(
     meetingId: String?
 ) {
     val scaffoldState = rememberScaffoldState()
-    val context = LocalContext.current
     LaunchedEffect(true) {
         viewModel.chatResults.collect { result ->
             when(result) {
@@ -68,8 +70,7 @@ fun ChatScreen(
     if(state.isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -96,7 +97,7 @@ fun ChatScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Go back",
-                            tint = Color.Blue
+                            tint = MaterialTheme.colors.primary
                         )
                     }
                 }
@@ -143,23 +144,27 @@ fun ChatScreen(
                                         }
                                         drawPath(
                                             path = trianglePath,
-                                            color = if (isOwnMessage) Color(0xFF5b86e5) else Color.DarkGray
+                                            color = if (isOwnMessage) LimeGreen900 else Color.DarkGray
                                         )
                                     }
+                                    .clip(RoundedCornerShape(6.dp))
                                     .background(
-                                        brush = if (isOwnMessage) Brush.horizontalGradient(
-                                            colors = listOf(
-                                                Color(0xFF36d1dc),
-                                                Color(0xFF5b86e5)
-                                            )
-                                        ) else Brush.horizontalGradient(
-                                            colors = listOf(
-                                                Color.DarkGray,
-                                                Color.DarkGray
-                                            )
-                                        ),
-                                        shape = RoundedCornerShape(10.dp)
+                                        color = if (isOwnMessage) LimeGreen900 else Color.DarkGray
                                     )
+//                                    .background(
+//                                        brush = if (isOwnMessage) Brush.horizontalGradient(
+//                                            colors = listOf(
+//                                                LimeGreen600,
+//                                                LimeGreen900
+//                                            )
+//                                        ) else Brush.horizontalGradient(
+//                                            colors = listOf(
+//                                                Color.DarkGray,
+//                                                Color.DarkGray
+//                                            )
+//                                        ),
+//                                        shape = RoundedCornerShape(10.dp)
+//                                    )
                                     .padding(8.dp)
                             ) {
                                 Text(
@@ -196,7 +201,7 @@ fun ChatScreen(
                     IconButton(
                         onClick = { viewModel.onEvent(ChatEvent.SendMessage) }
                     ) {
-                        Icon(imageVector = Icons.Default.Send, contentDescription = "Send", tint = Color(0xFF36d1dc ))
+                        Icon(imageVector = Icons.Default.Send, contentDescription = "Send", tint = MaterialTheme.colors.primary)
                     }
                 }
             }

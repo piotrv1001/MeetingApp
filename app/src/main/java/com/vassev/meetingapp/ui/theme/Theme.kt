@@ -7,19 +7,26 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.vassev.meetingapp.presentation.settings.SettingsViewmodel
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = LimeGreen200,
+    primaryVariant = LimeGreen600,
+    secondary = LimeGreen600,
+    secondaryVariant = LimeGreen800,
+    onPrimary = Color.Black,
+    onSecondary = Color.Black
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = LimeGreen400,
+    primaryVariant = LimeGreen600,
+    secondary = LimeGreen600,
+    secondaryVariant = LimeGreen800,
+    onPrimary = Color.Black,
+    onSecondary = Color.Black
 
     /* Other default colors to override
     background = Color.White,

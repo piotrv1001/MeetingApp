@@ -1,11 +1,6 @@
 package com.vassev.meetingapp.presentation.meeting_info.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,22 +12,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.vassev.meetingapp.data.remote.dto.MeetingDTO
-import com.vassev.meetingapp.domain.model.Meeting
-import com.vassev.meetingapp.domain.util.DateUtil
 import com.vassev.meetingapp.presentation.meeting_info.MeetingInfoEvent
 import com.vassev.meetingapp.presentation.meeting_info.MeetingInfoViewmodel
 import com.vassev.meetingapp.presentation.util.Screen
-import kotlinx.coroutines.flow.MutableStateFlow
-import java.time.LocalDate
 
 @Composable
 fun MeetingInfoScreen(
@@ -49,8 +37,7 @@ fun MeetingInfoScreen(
     if(state.isLoadingMeetingInfo) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -74,7 +61,7 @@ fun MeetingInfoScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Go back",
-                        tint = Color.Blue
+                        tint = MaterialTheme.colors.primary
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -87,88 +74,87 @@ fun MeetingInfoScreen(
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xfff5f5f5))
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                elevation = 18.dp
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Location"
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        state.meetingDTO?.location?.let {
-                            Text(
-                                text = it,
-                                fontSize = 16.sp
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row{
-                        Icon(
-                            imageVector = Icons.Default.People,
-                            contentDescription = "People"
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = state.meetingDTO?.users?.size.toString() + " members",
-                            fontSize = 16.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.Timelapse,
-                            contentDescription = "Duration"
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        val hours = state.meetingDTO?.duration?.div(60)
-                        val minutes = state.meetingDTO?.duration?.rem(60)
-                        if(minutes == 0) {
-                            Text(
-                                text = hours.toString() + " h",
-                                fontSize = 16.sp
-                            )
-                        } else {
-                            Text(
-                                text = hours.toString() + " h " + minutes.toString() + " min",
-                                fontSize = 16.sp
-                            )
-                        }
-                    }
-                }
-                Button(
-                    onClick = { navController.navigate(Screen.AddEditMeetingScreen.route + "?meetingId=$meetingId") },
+                Row(
                     modifier = Modifier
-                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 18.dp
-                    ),
-                    contentPadding = PaddingValues(
-                        start = 10.dp,
-                        end = 10.dp,
-                        top = 10.dp,
-                        bottom = 10.dp
-                    )
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit"
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Location"
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            state.meetingDTO?.location?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row{
+                            Icon(
+                                imageVector = Icons.Default.People,
+                                contentDescription = "People"
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = state.meetingDTO?.users?.size.toString() + " members",
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.Timelapse,
+                                contentDescription = "Duration"
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            val hours = state.meetingDTO?.duration?.div(60)
+                            val minutes = state.meetingDTO?.duration?.rem(60)
+                            if(minutes == 0) {
+                                Text(
+                                    text = hours.toString() + " h",
+                                    fontSize = 16.sp
+                                )
+                            } else {
+                                Text(
+                                    text = hours.toString() + " h " + minutes.toString() + " min",
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                    }
+                    Button(
+                        onClick = { navController.navigate(Screen.AddEditMeetingScreen.route + "?meetingId=$meetingId") },
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 18.dp
+                        ),
+                        contentPadding = PaddingValues(
+                            start = 10.dp,
+                            end = 10.dp,
+                            top = 10.dp,
+                            bottom = 10.dp
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit"
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))

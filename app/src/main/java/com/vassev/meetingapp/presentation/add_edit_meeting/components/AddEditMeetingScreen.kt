@@ -65,8 +65,7 @@ fun AddEditMeetingScreen(
     if(state.isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -170,10 +169,6 @@ fun AddEditMeetingScreen(
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                     onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 18.dp
                     ),
@@ -187,7 +182,7 @@ fun AddEditMeetingScreen(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Search members",
-                        tint = Color.White
+                        tint = MaterialTheme.colors.onPrimary
                     )
                 }
             }
@@ -242,7 +237,6 @@ fun AddEditMeetingScreen(
                 ) {
                     Text(
                         text = "Cancel",
-                        color = Color.Black,
                     )
                 }
                 Button(
@@ -250,10 +244,6 @@ fun AddEditMeetingScreen(
                         .weight(1f),
                     onClick = { viewModel.onEvent(AddEditMeetingEvent.SaveButtonClicked) },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 18.dp
                     ),
@@ -271,28 +261,11 @@ fun AddEditMeetingScreen(
             Row (
                 verticalAlignment = Alignment.CenterVertically
                     ){
-                Button(
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                    onClick = { viewModel.onEvent(AddEditMeetingEvent.GoBackButtonClicked) },
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Blue,
-                        contentColor = Color.White
-                    ),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 18.dp
-                    ),
-                    contentPadding = PaddingValues(
-                        start = 10.dp,
-                        end = 10.dp,
-                        top = 10.dp,
-                        bottom = 10.dp
-                    )
-                ) {
+                IconButton(onClick = { viewModel.onEvent(AddEditMeetingEvent.GoBackButtonClicked) }) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Go back"
+                        contentDescription = "Go back",
+                        tint = MaterialTheme.colors.primary
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))

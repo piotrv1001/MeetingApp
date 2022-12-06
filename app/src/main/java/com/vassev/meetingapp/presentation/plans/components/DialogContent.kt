@@ -92,7 +92,7 @@ fun DialogContent(
                 Button(
                     onClick = closeDialog,
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.White
+                        backgroundColor = MaterialTheme.colors.background
                     ),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 0.dp
@@ -107,7 +107,7 @@ fun DialogContent(
                 Button(
                     onClick = if(plan.name == "") deleteConfirmClick else leaveMeetingClick,
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.White
+                        backgroundColor = MaterialTheme.colors.background
                     ),
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 0.dp

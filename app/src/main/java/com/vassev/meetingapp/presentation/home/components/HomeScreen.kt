@@ -43,8 +43,7 @@ fun HomeScreen(
     if(isLoading) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -77,10 +76,6 @@ fun HomeScreen(
                             .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                         onClick = { navController.navigate(Screen.AddEditMeetingScreen.route) },
                         shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Blue,
-                            contentColor = Color.White
-                        ),
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = 18.dp
                         ),
@@ -94,7 +89,7 @@ fun HomeScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add meeting",
-                            tint = Color.White
+                            tint = MaterialTheme.colors.onPrimary
                         )
                     }
                 }

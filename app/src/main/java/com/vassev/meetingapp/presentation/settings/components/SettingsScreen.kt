@@ -3,8 +3,7 @@ package com.vassev.meetingapp.presentation.settings.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.OfflineBolt
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -66,7 +65,7 @@ fun SettingsScreen(
             )
         ) {
             Icon(
-                Icons.Filled.OfflineBolt,
+                Icons.Filled.PowerSettingsNew,
                 contentDescription = "Log out",
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
