@@ -13,11 +13,12 @@ import com.vassev.meetingapp.presentation.settings.SettingsViewmodel
 
 private val DarkColorPalette = darkColors(
     primary = LimeGreen200,
-    primaryVariant = LimeGreen600,
-    secondary = LimeGreen600,
-    secondaryVariant = LimeGreen800,
+    primaryVariant = LimeGreen100,
+    secondary = LimeGreen100,
+    secondaryVariant = LimeGreen200,
     onPrimary = Color.Black,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
+    onError = ErrorDark
 )
 
 private val LightColorPalette = lightColors(
@@ -26,7 +27,8 @@ private val LightColorPalette = lightColors(
     secondary = LimeGreen600,
     secondaryVariant = LimeGreen800,
     onPrimary = Color.Black,
-    onSecondary = Color.Black
+    onSecondary = Color.Black,
+    onError = ErrorLight
 
     /* Other default colors to override
     background = Color.White,

@@ -108,33 +108,32 @@ fun HomeScreen(
                     ) { index, meeting ->
                         Spacer(modifier = Modifier.height(16.dp))
                         Card(
+                            modifier = Modifier
+                                .clickable { navController.navigate(Screen.MeetingInfoScreen.route + "/${meeting.meetingId}") },
                             shape = RoundedCornerShape(10.dp),
                             elevation = 18.dp
                         ) {
                             Column(
                                 modifier = Modifier
                                     .padding(16.dp)
-                                    .clickable { navController.navigate(Screen.MeetingInfoScreen.route + "/${meeting.meetingId}") }
                             ) {
                                 Text(
                                     text = meeting.name,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(32.dp))
                                 Row(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.People,
-                                        contentDescription = "How many members",
-                                        tint = Color.Gray
+                                        contentDescription = "How many members"
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = "${meeting.users.size} members",
-                                        fontSize = 16.sp,
-                                        color = Color.Gray
+                                        fontSize = 16.sp
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -143,14 +142,12 @@ fun HomeScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.LocationOn,
-                                        contentDescription = "Location",
-                                        tint = Color.Gray
+                                        contentDescription = "Location"
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = meeting.location,
-                                        fontSize = 16.sp,
-                                        color = Color.Gray
+                                        fontSize = 16.sp
                                     )
                                 }
                             }

@@ -10,6 +10,5 @@ sealed class GenerateTimeEvent {
     object DecrementWeeks: GenerateTimeEvent()
     object IncrementResults: GenerateTimeEvent()
     object DecrementResults: GenerateTimeEvent()
-    data class ChooseTimeOfDay(val timeOfDay: Int): GenerateTimeEvent()
     data class ShowAllResultsCheckboxClicked(val checked: Boolean): GenerateTimeEvent()
 }

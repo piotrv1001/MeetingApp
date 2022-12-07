@@ -1,9 +1,11 @@
 package com.vassev.meetingapp.presentation.meeting_info
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vassev.meetingapp.data.remote.dto.MeetingDTO
 import com.vassev.meetingapp.domain.repository.MeetingRepository
+import com.vassev.meetingapp.domain.repository.MessageRepository
 import com.vassev.meetingapp.domain.service.GenerateMeetingTimeService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,11 +16,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeetingInfoViewmodel @Inject constructor(
+    private val prefs: SharedPreferences,
     private val meetingRepository: MeetingRepository,
+    private val messageRepository: MessageRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MeetingInfoState())
     val state = _state.asStateFlow()
+
+    val userId = prefs.getString("userId", "ERROR") ?: ""
 
     fun onEvent(event: MeetingInfoEvent) {
         when(event) {
@@ -29,7 +35,7 @@ class MeetingInfoViewmodel @Inject constructor(
     }
 
     private fun loadMeetingData(meetingId: String) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             _state.update { currentState ->
                 currentState.copy(
                     isLoadingMeetingInfo = true
@@ -38,7 +44,32 @@ class MeetingInfoViewmodel @Inject constructor(
             val meetingDTO = meetingRepository.getMeetingById(meetingId)
             _state.update { currentState ->
                 currentState.copy(
-                    meetingDTO = meetingDTO,
+                    meetingDTO = meetingDTO
+                )
+            }
+            loadLastMeetingMessage(meetingId)
+        }
+    }
+
+    private suspend fun loadLastMeetingMessage(meetingId: String) {
+        val lastMeetingMessage = messageRepository.getLastMessageForMeeting(meetingId)
+        if(lastMeetingMessage != null) {
+            var messageToDisplay = ""
+            messageToDisplay = if(userId == lastMeetingMessage.userId) {
+                "You: ${lastMeetingMessage.text}"
+            } else {
+                "${lastMeetingMessage.username}: ${lastMeetingMessage.text}"
+            }
+            _state.update { currentState ->
+                currentState.copy(
+                    lastMeetingMessage = messageToDisplay,
+                    isLoadingMeetingInfo = false
+                )
+            }
+        } else {
+            _state.update { currentState ->
+                currentState.copy(
+                    lastMeetingMessage = "No messages exchanged yet",
                     isLoadingMeetingInfo = false
                 )
             }

@@ -64,19 +64,6 @@ class GenerateTimeViewmodel @Inject constructor(
                     )
                 }
             }
-            is GenerateTimeEvent.ChooseTimeOfDay -> {
-                _state.update { currentState ->
-                    if(currentState.preferredTime == event.timeOfDay) {
-                        currentState.copy(
-                            preferredTime = 0
-                        )
-                    } else {
-                        currentState.copy(
-                            preferredTime = event.timeOfDay
-                        )
-                    }
-                }
-            }
             is GenerateTimeEvent.ChooseMeetingTime -> {
                 _state.update { currentState ->
                     currentState.copy(
@@ -103,6 +90,13 @@ class GenerateTimeViewmodel @Inject constructor(
     }
 
     private fun generateTime(meetingId: String) {
+        if(state.value.chosenTime != null) {
+            _state.update { currentState ->
+                currentState.copy(
+                    chosenTime = null
+                )
+            }
+        }
         viewModelScope.launch {
             _state.update { currentState ->
                 currentState.copy(
@@ -114,8 +108,7 @@ class GenerateTimeViewmodel @Inject constructor(
                 meetingId = meetingId,
                 generateTimeRequest = GenerateTimeRequest(
                     numberOfResults = state.value.numberOfResults,
-                    numberOfWeeks = state.value.numberOfWeeks,
-                    preferredTime = state.value.preferredTime
+                    numberOfWeeks = state.value.numberOfWeeks
                 )
             )
             _state.update { currentState ->
@@ -123,6 +116,13 @@ class GenerateTimeViewmodel @Inject constructor(
                     isLoading = false,
                     generatedTimes = generatedTimes
                 )
+            }
+            if(generatedTimes.isNotEmpty()) {
+                _state.update { currentState ->
+                    currentState.copy(
+                        chosenTime = generatedTimes[0]
+                    )
+                }
             }
         }
     }

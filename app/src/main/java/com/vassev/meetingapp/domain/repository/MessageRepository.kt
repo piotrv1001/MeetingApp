@@ -7,6 +7,8 @@ interface MessageRepository {
 
     suspend fun getAllMessagesForMeeting(meetingId: String): List<Message>
 
+    suspend fun getLastMessageForMeeting(meetingId: String): Message?
+
     sealed class Endpoints(val url: String) {
         object Message: Endpoints("${Constants.BASE_URL}/message")
     }

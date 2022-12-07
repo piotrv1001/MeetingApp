@@ -39,7 +39,9 @@ fun SettingsScreen(
         }
     }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -56,13 +58,8 @@ fun SettingsScreen(
         }
         Spacer(modifier = Modifier.height(32.dp))
         Button(
+            modifier = Modifier.fillMaxWidth(),
             onClick = { viewModel.onEvent(SettingsEvent.LogOutButtonClicked) },
-            contentPadding = PaddingValues(
-                start = 20.dp,
-                top = 12.dp,
-                end = 20.dp,
-                bottom = 12.dp
-            )
         ) {
             Icon(
                 Icons.Filled.PowerSettingsNew,

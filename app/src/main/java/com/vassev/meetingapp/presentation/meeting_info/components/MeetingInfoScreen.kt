@@ -1,5 +1,6 @@
 package com.vassev.meetingapp.presentation.meeting_info.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -78,98 +79,170 @@ fun MeetingInfoScreen(
                 shape = RoundedCornerShape(10.dp),
                 elevation = 18.dp
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-
+                Column (
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+
                     ) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location"
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            state.meetingDTO?.location?.let {
+                        Column(
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Location"
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                state.meetingDTO?.location?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = 18.sp
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row{
+                                Icon(
+                                    imageVector = Icons.Default.People,
+                                    contentDescription = "People"
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
                                 Text(
-                                    text = it,
-                                    fontSize = 16.sp
+                                    text = state.meetingDTO?.users?.size.toString() + " members",
+                                    fontSize = 18.sp
                                 )
                             }
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row{
-                            Icon(
-                                imageVector = Icons.Default.People,
-                                contentDescription = "People"
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = state.meetingDTO?.users?.size.toString() + " members",
-                                fontSize = 16.sp
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row {
-                            Icon(
-                                imageVector = Icons.Default.Timelapse,
-                                contentDescription = "Duration"
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            val hours = state.meetingDTO?.duration?.div(60)
-                            val minutes = state.meetingDTO?.duration?.rem(60)
-                            if(minutes == 0) {
-                                Text(
-                                    text = hours.toString() + " h",
-                                    fontSize = 16.sp
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Timelapse,
+                                    contentDescription = "Duration"
                                 )
-                            } else {
-                                Text(
-                                    text = hours.toString() + " h " + minutes.toString() + " min",
-                                    fontSize = 16.sp
-                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                val hours = state.meetingDTO?.duration?.div(60)
+                                val minutes = state.meetingDTO?.duration?.rem(60)
+                                if(minutes == 0) {
+                                    Text(
+                                        text = hours.toString() + " h",
+                                        fontSize = 18.sp
+                                    )
+                                } else {
+                                    Text(
+                                        text = hours.toString() + " h " + minutes.toString() + " min",
+                                        fontSize = 18.sp
+                                    )
+                                }
+                            }
+                        }
+                        Button(
+                            onClick = { navController.navigate(Screen.AddEditMeetingScreen.route + "?meetingId=$meetingId") },
+                            modifier = Modifier
+                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = 18.dp
+                            ),
+                            contentPadding = PaddingValues(
+                                start = 10.dp,
+                                end = 10.dp,
+                                top = 10.dp,
+                                bottom = 10.dp
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit"
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 1.dp,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    if(state.meetingDTO != null) {
+                        if(state.meetingDTO?.date != null) {
+                            if(state.meetingDTO?.date?.length!! > 1) {
+                                val formattedDate = state.meetingDTO?.date?.split(',')
+                                val date = formattedDate?.get(0)
+                                val time = formattedDate?.get(1)?.trim()
+                                Column {
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.CalendarToday,
+                                            contentDescription = "Calendar"
+                                        )
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = date ?: "Unknown",
+                                            fontSize = 18.sp
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Timer,
+                                            contentDescription = "Time"
+                                        )
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = time ?: "Unknown",
+                                            fontSize = 18.sp
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(32.dp))
                             }
                         }
                     }
                     Button(
-                        onClick = { navController.navigate(Screen.AddEditMeetingScreen.route + "?meetingId=$meetingId") },
-                        modifier = Modifier
-                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        elevation = ButtonDefaults.elevation(
-                            defaultElevation = 18.dp
-                        ),
-                        contentPadding = PaddingValues(
-                            start = 10.dp,
-                            end = 10.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { navController.navigate(Screen.GenerateTimeScreen.route + "/$meetingId") }
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit"
+                        Text(
+                            text = "Generate meeting time"
                         )
                     }
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { navController.navigate(Screen.ChatScreen.route + "/$meetingId") }) {
-                Text(
-                    text = "Join chat room"
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = { navController.navigate(Screen.GenerateTimeScreen.route + "/$meetingId") }
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                elevation = 18.dp
             ) {
-                Text(
-                    text = "Generate meeting time"
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.ModeComment,
+                            contentDescription = "Chat"
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(text = state.lastMeetingMessage)
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { navController.navigate(Screen.ChatScreen.route + "/$meetingId") }
+                    ) {
+                        Text(
+                            text = "Join chat"
+                        )
+                    }
+                }
             }
         }
     }

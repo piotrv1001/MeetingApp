@@ -18,4 +18,13 @@ class MessageRepositoryImpl(
             emptyList()
         }
     }
+
+    override suspend fun getLastMessageForMeeting(meetingId: String): Message? {
+        return try {
+            client.get<MessageDTO>("http://${MessageRepository.Endpoints.Message.url}/$meetingId?lastMessage=true").fromDTOToEntity()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }

@@ -34,3 +34,6 @@ val LimeGreen900 = Color(0xFF009b00)
 
 val Blue700 = Color(0xFF0374ff)
 val Blue400 = Color(0xFF0ea7ff)
+
+val ErrorLight = Color(0xFF8B0000)
+val ErrorDark = Color(0XFFff6C70)

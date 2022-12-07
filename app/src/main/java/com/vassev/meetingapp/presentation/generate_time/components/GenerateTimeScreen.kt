@@ -1,6 +1,7 @@
 package com.vassev.meetingapp.presentation.generate_time.components
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -74,13 +75,13 @@ fun GenerateTimeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
                 .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
                     onClick = { navController.navigateUp() },
@@ -90,238 +91,165 @@ fun GenerateTimeScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Go back",
-                        tint = Color.Blue
+                        tint = MaterialTheme.colors.primary
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xfff5f5f5))
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                TextButton(
+                    onClick = {
+                    meetingId?.let {
+                        GenerateTimeEvent.SaveTimeButtonClicked(
+                            it
+                        )
+                    }?.let { viewModel.onEvent(it) }
+                },
+                enabled = state.chosenTime != null && !state.isLoading
                 ) {
                     Text(
-                        text = "How many weeks ahead?"
+                        text = "Save",
+                        fontSize = 18.sp
                     )
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Button(
-                            onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementWeeks)},
-                            enabled = state.numberOfWeeks > 1,
-                            modifier = Modifier
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Blue,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(
-                                start = 10.dp,
-                                end = 10.dp,
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Remove,
-                                contentDescription = "Decrease weeks ahead"
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = state.numberOfWeeks.toString()
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Button(
-                            onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementWeeks)},
-                            enabled = state.numberOfWeeks < 9,
-                            modifier = Modifier
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Blue,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(
-                                start = 10.dp,
-                                end = 10.dp,
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Increase weeks ahead"
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = "How many results?"
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row {
-                        Checkbox(
-                            checked = state.showAllResults,
-                            onCheckedChange = { checked ->
-                                viewModel.onEvent(GenerateTimeEvent.ShowAllResultsCheckboxClicked(checked))
-                            },
-                            colors = CheckboxDefaults.colors(
-                                uncheckedColor = Color.Gray,
-                                checkedColor = Color.Gray,
-                                checkmarkColor = Color.White
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "All possible results",
-                        )
-                    }
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        Button(
-                            onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementResults)},
-                            enabled = !state.showAllResults && state.numberOfResults > 1,
-                            modifier = Modifier
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Blue,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(
-                                start = 10.dp,
-                                end = 10.dp,
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Remove,
-                                contentDescription = "Decrease results"
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = state.numberOfResults.toString()
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Button(
-                            onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementResults)},
-                            enabled = !state.showAllResults && state.numberOfResults < 9,
-                            modifier = Modifier
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color.Blue,
-                                contentColor = Color.White
-                            ),
-                            contentPadding = PaddingValues(
-                                start = 10.dp,
-                                end = 10.dp,
-                                top = 10.dp,
-                                bottom = 10.dp
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Increase results"
-                            )
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    text = "What time of day?"
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(1)) }
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (state.preferredTime == 1) Color.Black else Color(0xfff5f5f5))
-                            .padding(
-                                horizontal = 8.dp,
-                                vertical = 12.dp,
-                            ),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.WbSunny,
-                            contentDescription = "Morning",
-                            tint = if(state.preferredTime == 1) Color.White else Color.Black
-                        )
-                        Text(
-                            text = "Morning",
-                            color = if(state.preferredTime == 1) Color.White else Color.Black
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(2)) }
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (state.preferredTime == 2) Color.Black else Color(0xfff5f5f5))
-                            .padding(
-                                horizontal = 8.dp,
-                                vertical = 12.dp
-                            ),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Cloud,
-                            contentDescription = "Afternoon",
-                            tint = if(state.preferredTime == 2) Color.White else Color.Black
-                        )
-                        Text(
-                            text = "Afternoon",
-                            color = if(state.preferredTime == 2) Color.White else Color.Black
-                        )
-                    }
-                    Row(
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable { viewModel.onEvent(GenerateTimeEvent.ChooseTimeOfDay(3)) }
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(if (state.preferredTime == 3) Color.Black else Color(0xfff5f5f5))
-                            .padding(
-                                horizontal = 8.dp,
-                                vertical = 12.dp
-                            ),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ModeNight,
-                            contentDescription = "Evening",
-                            tint = if(state.preferredTime == 3) Color.White else Color.Black
-                        )
-                        Text(
-                            text = "Evening",
-                            color = if(state.preferredTime == 3) Color.White else Color.Black
-                        )
-                    }
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
+            Card(
+                shape = RoundedCornerShape(10.dp),
+                elevation = 18.dp
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "How many weeks ahead?"
+                        )
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Button(
+                                onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementWeeks)},
+                                enabled = state.numberOfWeeks > 1,
+                                modifier = Modifier
+                                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(
+                                    start = 10.dp,
+                                    end = 10.dp,
+                                    top = 10.dp,
+                                    bottom = 10.dp
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Remove,
+                                    contentDescription = "Decrease weeks ahead"
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = state.numberOfWeeks.toString()
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Button(
+                                onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementWeeks)},
+                                enabled = state.numberOfWeeks < 9,
+                                modifier = Modifier
+                                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(
+                                    start = 10.dp,
+                                    end = 10.dp,
+                                    top = 10.dp,
+                                    bottom = 10.dp
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Increase weeks ahead"
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Text(
+                        text = "How many results?"
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row {
+                            Checkbox(
+                                checked = state.showAllResults,
+                                onCheckedChange = { checked ->
+                                    viewModel.onEvent(GenerateTimeEvent.ShowAllResultsCheckboxClicked(checked))
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    uncheckedColor = Color.Gray,
+                                    checkedColor = Color.Gray,
+                                    checkmarkColor = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = "All possible results",
+                            )
+                        }
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            Button(
+                                onClick = { viewModel.onEvent(GenerateTimeEvent.DecrementResults)},
+                                enabled = !state.showAllResults && state.numberOfResults > 1,
+                                modifier = Modifier
+                                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(
+                                    start = 10.dp,
+                                    end = 10.dp,
+                                    top = 10.dp,
+                                    bottom = 10.dp
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Remove,
+                                    contentDescription = "Decrease results"
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = state.numberOfResults.toString()
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Button(
+                                onClick = { viewModel.onEvent(GenerateTimeEvent.IncrementResults)},
+                                enabled = !state.showAllResults && state.numberOfResults < 9,
+                                modifier = Modifier
+                                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(
+                                    start = 10.dp,
+                                    end = 10.dp,
+                                    top = 10.dp,
+                                    bottom = 10.dp
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Increase results"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(64.dp))
             Button(
                 onClick = {
                     meetingId?.let {
@@ -332,32 +260,14 @@ fun GenerateTimeScreen(
                 },
                 enabled = !state.isLoading,
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth()
                     .align(CenterHorizontally)
             ) {
                 Text(
-                    text = "Generate meeting time"
+                    text = "Generate"
                 )
             }
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = {
-                    meetingId?.let {
-                        GenerateTimeEvent.SaveTimeButtonClicked(
-                            it
-                        )
-                    }?.let { viewModel.onEvent(it) }
-                },
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .align(CenterHorizontally),
-                enabled = state.chosenTime != null && !state.isLoading
-            ) {
-                Text(
-                    text = "Save meeting time"
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(64.dp))
             if(state.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -373,14 +283,14 @@ fun GenerateTimeScreen(
                     ) {
                         Text(
                             text = "No results found",
-                            color = Color(0xFF8B0000),
+                            color = MaterialTheme.colors.onError,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         itemsIndexed(
                             items = state.generatedTimes
@@ -401,12 +311,8 @@ fun GenerateTimeScreen(
                                 toHour = toHour,
                                 toMinute = toMinute
                             )
-                            Row (
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(CircleShape)
-                                    .background(if(state.chosenTime == generatedTime) Color.DarkGray else Color(0xFFF5F5F5))
-                                    .padding(8.dp)
                                     .clickable {
                                         viewModel.onEvent(
                                             GenerateTimeEvent.ChooseMeetingTime(
@@ -414,33 +320,39 @@ fun GenerateTimeScreen(
                                             )
                                         )
                                     },
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                Box(
+                                shape = RoundedCornerShape(10.dp),
+                                elevation = 18.dp,
+                                border = if (state.chosenTime == generatedTime) BorderStroke(1.dp, MaterialTheme.colors.primary) else null
+                            ) {
+                                Column(
                                     modifier = Modifier
-                                        .background(Color.DarkGray, shape = CircleShape)
-                                        .layout { measurable, constraints ->
-                                            val placeable = measurable.measure(constraints)
-                                            val minPadding = placeable.height / 4
-                                            val width =
-                                                maxOf(placeable.width + minPadding, placeable.height)
-                                            layout(width, placeable.height) {
-                                                placeable.place((width - placeable.width) / 2, 0)
-                                            }
-                                        },
-                                    contentAlignment = Center
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
                                 ) {
-                                    Text(
-                                        text = (index + 1).toString(),
-                                        color = Color.White,
-                                        fontSize = 18.sp
-                                    )
+                                    Row {
+                                        Icon(
+                                            imageVector = Icons.Filled.CalendarToday,
+                                            contentDescription = "Calendar",
+                                            tint = MaterialTheme.colors.onBackground
+                                        )
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = "$dayOfWeekName, $day $monthName $year"
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Row {
+                                        Icon(
+                                            imageVector = Icons.Filled.Timer,
+                                            contentDescription = "Time",
+                                            tint = MaterialTheme.colors.onBackground
+                                        )
+                                        Spacer(modifier = Modifier.width(16.dp))
+                                        Text(
+                                            text = formattedPlan
+                                        )
+                                    }
                                 }
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    text = "$dayOfWeekName, $day $monthName $year, $formattedPlan",
-                                    color = if(state.chosenTime == generatedTime) Color.White else Color.Black
-                                )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                         }
