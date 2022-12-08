@@ -76,151 +76,153 @@ fun AddEditMeetingScreen(
                 .fillMaxSize()
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            TextField(
-                value = state.title,
-                onValueChange = {
-                    viewModel.onEvent(AddEditMeetingEvent.TitleChanged(it))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "Title")
-                }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.align(Alignment.Start)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Timelapse,
-                    contentDescription = "Meeting duration"
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(text = "Duration")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.align(Alignment.Start),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(50.dp),
-                    value = state.hours,
+            Column {
+                TextField(
+                    value = state.title,
                     onValueChange = {
-                        viewModel.onEvent(AddEditMeetingEvent.HoursChanged(it))
+                        viewModel.onEvent(AddEditMeetingEvent.TitleChanged(it))
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = Color.Gray)
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "Title")
+                    }
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "h")
-                Spacer(modifier = Modifier.width(16.dp))
-                OutlinedTextField(
-                    modifier = Modifier
-                        .height(50.dp)
-                        .width(50.dp),
-                    value = state.minutes,
-                    onValueChange = {
-                        viewModel.onEvent(AddEditMeetingEvent.MinutesChanged(it))
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = Color.Gray)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "min")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = state.location,
-                leadingIcon = {
-                    Icon(imageVector = Icons.Default.LocationOn, contentDescription = "location")
-                },
-                onValueChange = {
-                    viewModel.onEvent(AddEditMeetingEvent.LocationChanged(it))
-                },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(text = "Location")
-                }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row (
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row {
-                    Icon(
-                        imageVector = Icons.Default.People,
-                        contentDescription = "Meeting members"
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = "Members (${selectedUsers.size})")
-                }
-                Button(
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                    onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) },
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 18.dp
-                    ),
-                    contentPadding = PaddingValues(
-                        start = 10.dp,
-                        end = 10.dp,
-                        top = 10.dp,
-                        bottom = 10.dp
-                    )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.align(Alignment.Start)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Search members",
-                        tint = MaterialTheme.colors.onPrimary
+                        imageVector = Icons.Filled.Timelapse,
+                        contentDescription = "Meeting duration"
                     )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = "Duration")
                 }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                items(
-                    items = selectedUsers.toList()
-                        .sortedWith { x: Pair<UserDTO, Boolean>, y: Pair<UserDTO, Boolean> -> if (x.first.userId == viewModel.userId) -1 else 1 },
-                    key = {
-                        it.first.userId
-                    }
-                ) { entry ->
-                    Row(
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.align(Alignment.Start),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    OutlinedTextField(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
+                            .height(50.dp)
+                            .width(50.dp),
+                        value = state.hours,
+                        onValueChange = {
+                            viewModel.onEvent(AddEditMeetingEvent.HoursChanged(it))
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color.Gray)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "h")
+                    Spacer(modifier = Modifier.width(16.dp))
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(50.dp),
+                        value = state.minutes,
+                        onValueChange = {
+                            viewModel.onEvent(AddEditMeetingEvent.MinutesChanged(it))
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color.Gray)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "min")
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = state.location,
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "location")
+                    },
+                    onValueChange = {
+                        viewModel.onEvent(AddEditMeetingEvent.LocationChanged(it))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "Location")
+                    }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row (
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.People,
+                            contentDescription = "Meeting members"
+                        )
                         Spacer(modifier = Modifier.width(16.dp))
-                        val username = if(entry.first.userId == viewModel.userId) {
-                            "${entry.first.name} (Me)"
-                        } else {
-                            entry.first.name
-                        }
-                        Text(
-                            text = username,
-                            fontSize = 18.sp
+                        Text(text = "Members (${selectedUsers.size})")
+                    }
+                    Button(
+                        modifier = Modifier
+                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                        onClick = {viewModel.onEvent(AddEditMeetingEvent.SearchUsersButtonClicked) },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevation(
+                            defaultElevation = 18.dp
+                        ),
+                        contentPadding = PaddingValues(
+                            start = 10.dp,
+                            end = 10.dp,
+                            top = 10.dp,
+                            bottom = 10.dp
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Search members",
+                            tint = MaterialTheme.colors.onPrimary
                         )
                     }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally),
-                        thickness = 1.dp,
-                        color = Color.Gray
-                    )
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    items(
+                        items = selectedUsers.toList()
+                            .sortedWith { x: Pair<UserDTO, Boolean>, y: Pair<UserDTO, Boolean> -> if (x.first.userId == viewModel.userId) -1 else 1 },
+                        key = {
+                            it.first.userId
+                        }
+                    ) { entry ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Spacer(modifier = Modifier.width(16.dp))
+                            val username = if(entry.first.userId == viewModel.userId) {
+                                "${entry.first.name} (Me)"
+                            } else {
+                                entry.first.name
+                            }
+                            Text(
+                                text = username,
+                                fontSize = 18.sp
+                            )
+                        }
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally),
+                            thickness = 1.dp,
+                            color = Color.Gray
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -229,15 +231,11 @@ fun AddEditMeetingScreen(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { navController.navigateUp() },
-                    contentAlignment = Alignment.Center
+                TextButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { navController.navigateUp()}
                 ) {
-                    Text(
-                        text = "Cancel",
-                    )
+                    Text(text = "Cancel")
                 }
                 Button(
                     modifier = Modifier

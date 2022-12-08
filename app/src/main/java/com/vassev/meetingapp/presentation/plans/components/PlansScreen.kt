@@ -255,7 +255,7 @@ fun PlansScreen(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add plan",
-                        tint = Color.White
+                        tint = MaterialTheme.colors.background
                     )
                 }
             }
@@ -265,8 +265,7 @@ fun PlansScreen(
             if (state.isLoading) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White),
+                        .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()

@@ -54,11 +54,17 @@ class MeetingInfoViewmodel @Inject constructor(
     private suspend fun loadLastMeetingMessage(meetingId: String) {
         val lastMeetingMessage = messageRepository.getLastMessageForMeeting(meetingId)
         if(lastMeetingMessage != null) {
+            var messageText = ""
+            messageText = if(lastMeetingMessage.text.length > 25) {
+                lastMeetingMessage.text.take(25) + "..."
+            } else {
+                lastMeetingMessage.text
+            }
             var messageToDisplay = ""
             messageToDisplay = if(userId == lastMeetingMessage.userId) {
-                "You: ${lastMeetingMessage.text}"
+                "You: $messageText"
             } else {
-                "${lastMeetingMessage.username}: ${lastMeetingMessage.text}"
+                "${lastMeetingMessage.username}: $messageText"
             }
             _state.update { currentState ->
                 currentState.copy(

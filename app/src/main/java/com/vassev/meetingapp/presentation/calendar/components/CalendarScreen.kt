@@ -65,13 +65,23 @@ fun CalendarScreen(
             calendar.set(Calendar.MONTH, state.specificDay.month - 1)
             calendar.set(Calendar.DAY_OF_MONTH, state.specificDay.day)
             val dateLong = calendar.timeInMillis
-            AndroidView(factory = { CalendarView(it) }, update = {
-                it.setDate(dateLong, false, false)
-                it.setOnDateChangeListener{ _, year, month, day ->
-                    val specificDay = SpecificDay(day, month + 1, year)
-                    viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(specificDay))
-                }
-            })
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color.White)
+                    .padding(8.dp)
+            ) {
+                AndroidView(
+                    modifier = Modifier.background(Color.White),
+                    factory = { CalendarView(it) }, update = {
+                        it.setDate(dateLong, false, false)
+                        it.setOnDateChangeListener{ _, year, month, day ->
+                            val specificDay = SpecificDay(day, month + 1, year)
+                            viewModel.onEvent(SharedPlanEvent.SpecificDaySelected(specificDay))
+                        }
+                    })
+            }
             Spacer(modifier = Modifier.height(32.dp))
             Card(
                 modifier = Modifier

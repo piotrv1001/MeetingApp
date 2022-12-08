@@ -100,7 +100,7 @@ fun DialogContent(
                 ) {
                     Text(
                         text = "Cancel",
-                        color = Color.Red
+                        color = MaterialTheme.colors.error
                     )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
@@ -115,7 +115,7 @@ fun DialogContent(
                 ) {
                     Text(
                         text = if(plan.name == "") "Delete" else "Leave",
-                        color = Color.Red
+                        color = MaterialTheme.colors.error
                     )
                 }
             }

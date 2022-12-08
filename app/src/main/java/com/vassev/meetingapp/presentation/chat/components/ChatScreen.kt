@@ -29,6 +29,7 @@ import com.vassev.meetingapp.domain.util.Resource
 import com.vassev.meetingapp.presentation.chat.ChatEvent
 import com.vassev.meetingapp.presentation.chat.ChatViewmodel
 import com.vassev.meetingapp.ui.theme.LimeGreen600
+import com.vassev.meetingapp.ui.theme.LimeGreen700
 import com.vassev.meetingapp.ui.theme.LimeGreen900
 import kotlinx.coroutines.flow.collect
 
@@ -144,12 +145,12 @@ fun ChatScreen(
                                         }
                                         drawPath(
                                             path = trianglePath,
-                                            color = if (isOwnMessage) LimeGreen900 else Color.DarkGray
+                                            color = if (isOwnMessage) LimeGreen700 else Color.DarkGray
                                         )
                                     }
                                     .clip(RoundedCornerShape(6.dp))
                                     .background(
-                                        color = if (isOwnMessage) LimeGreen900 else Color.DarkGray
+                                        color = if (isOwnMessage) LimeGreen700 else Color.DarkGray
                                     )
 //                                    .background(
 //                                        brush = if (isOwnMessage) Brush.horizontalGradient(
